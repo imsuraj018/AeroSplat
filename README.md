@@ -869,3 +869,180 @@ Project Repository: https://github.com/imsuraj018/AeroSplat
 ---
 
 **AeroSplat — From Drone Imagery to Disaster Intelligence.**
+
+
+
+## Local Installation and Execution
+
+Follow these steps to download, configure, and run AeroSplat locally on a Windows machine.
+
+### 1. Prerequisites
+
+Install the following tools before running the project:
+
+- Python 3.10 or 3.11
+- Git
+- Node.js and npm (for the frontend dashboard)
+- COLMAP (required for the photogrammetry reconstruction pipeline)
+- NVIDIA GPU with compatible CUDA drivers (recommended for GPU acceleration)
+
+Verify the installations:
+
+```powershell
+python --version
+git --version
+node --version
+npm --version
+```
+
+### 2. Clone the Repository
+
+Open PowerShell and execute:
+
+```powershell
+git clone https://github.com/imsuraj018/AeroSplat.git
+cd AeroSplat_Upgraded
+```
+
+If you already have the project downloaded, navigate directly to its root directory:
+
+```powershell
+cd "C:\Users\Admin\Downloads\AeroSplat_Upgraded"
+```
+
+### 3. Create and Activate the Python Environment
+
+Create a virtual environment:
+
+```powershell
+py -3.10 -m venv myenv
+```
+
+Activate it:
+
+```powershell
+.\myenv\Scripts\Activate.ps1
+```
+
+If PowerShell blocks script execution, run:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\myenv\Scripts\Activate.ps1
+```
+
+Verify Python:
+
+```powershell
+python --version
+```
+
+### 4. Install Python Dependencies
+
+Upgrade pip:
+
+```powershell
+python -m pip install --upgrade pip
+```
+
+Install the project dependencies:
+
+```powershell
+pip install -r requirements.txt
+```
+
+### 5. Configure Environment Variables
+
+If the project requires API keys or environment-specific configuration, create a `.env` file in the appropriate application directory.
+
+Example:
+
+```env
+# Add only the environment variables required by your configuration.
+# Never commit real API keys or passwords.
+```
+
+### 6. Start the AeroSplat Backend
+
+From the project root directory, with the virtual environment activated:
+
+```powershell
+uvicorn aerosplat_system.server:app --host 0.0.0.0 --port 8000 --reload
+```
+
+The backend should be accessible at:
+
+- API: http://127.0.0.1:8000
+- Interactive API documentation: http://127.0.0.1:8000/docs
+
+Keep this terminal running.
+
+### 7. Start the Frontend Dashboard
+
+Open a second PowerShell terminal and navigate to the dashboard directory:
+
+```powershell
+cd "C:\Users\Admin\Downloads\AeroSplat_Upgraded\Dashboard"
+```
+
+Install frontend dependencies:
+
+```powershell
+npm install
+```
+
+Start the development server:
+
+```powershell
+npm run dev
+```
+
+Open the local URL displayed in the terminal (commonly `http://localhost:5173` for Vite).
+
+If the dashboard uses a different frontend framework or start script, follow the scripts defined in `Dashboard/package.json`.
+
+### 8. Optional: Start the Laya Service
+
+If the Laya advisory/reassessment service is included and configured in your project, activate its dedicated environment and start it using its actual application entry point.
+
+For example, if its environment is named `laya_env`:
+
+```powershell
+.\laya_env\Scripts\Activate.ps1
+```
+
+Start the service using the entry point configured in that component. Do not run this step if the service is not required for your current workflow.
+
+### 9. Verify the Application
+
+After starting the backend and frontend, verify:
+
+1. The backend starts without Python import or dependency errors.
+2. The API documentation opens at `http://127.0.0.1:8002/docs`.
+3. The frontend dashboard loads in the browser.
+4. The dashboard can communicate with the backend.
+5. Image upload, reconstruction, 3D visualization, damage analysis, and route-planning functions work with the required input data and configured dependencies.
+
+### 10. Stopping the Application
+
+Press `Ctrl + C` in each running terminal to stop its development server.
+
+To deactivate the Python virtual environment:
+
+```powershell
+deactivate
+```
+
+### Troubleshooting
+
+| Problem | Suggested solution |
+|---|---|
+| `python` not recognized | Verify Python installation and PATH configuration. |
+| `uvicorn` not recognized | Activate the virtual environment and run `pip install -r requirements.txt`. |
+| Module not found | Verify the working directory and install the missing dependency. |
+| Frontend dependency errors | Run `npm install` inside the dashboard directory. |
+| Frontend cannot connect to backend | Verify the backend URL and frontend API configuration. |
+| COLMAP not recognized | Install COLMAP and configure its executable path. |
+| CUDA unavailable | Verify NVIDIA drivers, CUDA compatibility, and the installed PyTorch build. |
+
+**Note:** The commands above describe the expected development workflow. Exact frontend scripts, optional service entry points, and configuration variables must match the files included in the repository.
