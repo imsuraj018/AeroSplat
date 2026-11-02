@@ -1,0 +1,97 @@
+{
+  "active_scene_id": "legacy",
+  "active_scene_name": "Existing Workspace",
+  "busy": false,
+  "stage": "idle",
+  "status": "Ready",
+  "progress": 0,
+  "job_id": null,
+  "started_at": null,
+  "finished_at": null,
+  "updated_at": 1789727905.3658972,
+  "images_count": 0,
+  "reconstruction_images_count": 0,
+  "evidence_images_count": 0,
+  "registered_images": 0,
+  "points3d": 0,
+  "observations": 0,
+  "mean_track_length": 0.0,
+  "mean_observations_per_image": 0.0,
+  "mean_reprojection_error_px": 0.0,
+  "camera_model": "\u2014",
+  "model_ready": false,
+  "model_status": "NONE",
+  "model_iteration": null,
+  "model_size_bytes": 0,
+  "model_source": null,
+  "model_job_dir": null,
+  "dataset_hash": null,
+  "model_dataset_hash": null,
+  "new_images_count": 0,
+  "last_error": null,
+  "analysis": {
+    "status": "NOT_RUN",
+    "quality": {
+      "images_analyzed": 0,
+      "mean_sharpness": null,
+      "blurred_images": 0,
+      "mean_brightness": null,
+      "dark_frame_ratio": null
+    },
+    "crack_visual_indicator": {
+      "status": "BASELINE",
+      "candidate_images": 0,
+      "mean_candidate_ratio": null
+    },
+    "geometry_indicator": {
+      "status": "PENDING",
+      "dominant_plane_tilt_deg": null,
+      "points_sampled": 0
+    },
+    "rubble_indicator": {
+      "status": "NOT_COMPUTED",
+      "volume_m3": null
+    },
+    "notes": []
+  },
+  "triage": {
+    "label": "GREEN",
+    "score": 0.0,
+    "confidence": null,
+    "severity": "Preliminary evidence-based screening only",
+    "directives": [
+      "No high-priority baseline indicator triggered; continue inspection."
+    ],
+    "reasons": [],
+    "disclaimer": "This screening does not certify structural safety or replace qualified inspection."
+  },
+  "recommendations": [
+    "No high-priority baseline indicator triggered; continue inspection."
+  ],
+  "route": {
+    "status": "NOT_COMPUTED",
+    "mode": "approach",
+    "entry_authorized": false,
+    "plan_frame": null,
+    "start": null,
+    "target": null,
+    "hazards": [],
+    "path": [],
+    "relative_distance": null,
+    "exposure_cost": null,
+    "blocked_zones": 0,
+    "instructions": [],
+    "reasons": [],
+    "updated_at": null,
+    "disclaimer": "Planning aid only. The route is not a declaration of structural safety or entry authorization."
+  },
+  "site_profile": {
+    "disaster_type": "Existing workspace",
+    "location": "",
+    "description": "Primary AeroSplat workspace.",
+    "created_at": null
+  },
+  "images": [],
+  "evidence": [],
+  "log": []
+}

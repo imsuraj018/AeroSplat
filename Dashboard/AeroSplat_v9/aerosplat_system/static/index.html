@@ -1,0 +1,3969 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AeroSplat | Post-Disaster Digital Twin</title>
+
+<style>
+:root{
+    --bg:#071018;
+    --panel:#0e1821;
+    --panel2:#111d27;
+    --line:#263846;
+    --text:#edf4f8;
+    --muted:#8ea2b1;
+    --accent:#5db7ef;
+    --good:#44d18a;
+    --warn:#e9bd56;
+    --bad:#ff6e6e;
+    --shadow:0 20px 60px rgba(0,0,0,.32);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    min-height:100%;
+    background:
+        radial-gradient(circle at 70% -10%,#122535 0,#071018 38%,#050b10 100%);
+    color:var(--text);
+    font:14px/1.45 "Segoe UI",Arial,sans-serif;
+}
+
+button,input,select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.top{
+    height:70px;
+    border-bottom:1px solid var(--line);
+    background:rgba(7,16,24,.96);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    position:sticky;
+    top:0;
+    z-index:20;
+    backdrop-filter:blur(12px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.mark{
+    width:38px;
+    height:38px;
+    border:1px solid #3b6d8d;
+    border-radius:10px;
+    display:grid;
+    place-items:center;
+    color:var(--accent);
+    font-weight:900;
+}
+
+.brand h1{
+    font-size:16px;
+    margin:0;
+}
+
+.eyebrow{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    color:var(--muted);
+}
+
+.top-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.pill{
+    border:1px solid var(--line);
+    padding:6px 10px;
+    border-radius:999px;
+    font-weight:800;
+    font-size:10px;
+    letter-spacing:.08em;
+}
+
+.ready{
+    color:var(--good);
+    background:#0b1e16;
+    border-color:#275b43;
+}
+
+.busy{
+    color:var(--warn);
+    background:#211b0d;
+    border-color:#624f22;
+}
+
+.stale{
+    color:var(--warn);
+    background:#211b0d;
+    border-color:#624f22;
+}
+
+.error{
+    color:var(--bad);
+    background:#241015;
+    border-color:#71313a;
+}
+
+.wrap{
+    max-width:1540px;
+    margin:0 auto;
+    padding:18px;
+}
+
+.toolbar{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+}
+
+.select,.input,.btn{
+    background:#0c151d;
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:8px;
+    padding:9px 11px;
+}
+
+.select{
+    min-width:270px;
+}
+
+.btn:hover:not(:disabled){
+    border-color:#4d7188;
+}
+
+.btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.primary{
+    background:#10304a;
+    border-color:#2c698f;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.7fr) minmax(370px,.78fr);
+    gap:14px;
+}
+
+.card{
+    background:linear-gradient(180deg,#101b24,#0c151d);
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+}
+
+.head{
+    padding:12px 15px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.title{
+    font-weight:800;
+}
+
+.sub{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.viewer{
+    height:660px;
+    position:relative;
+    background:
+        radial-gradient(circle at center,#17252f 0,#0b1218 48%,#03070a 100%);
+    overflow:hidden;
+}
+
+.viewer-host{
+    position:absolute;
+    inset:0;
+}
+
+.viewer-host canvas{
+    display:block;
+    width:100%!important;
+    height:100%!important;
+}
+
+.viewer-overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0,0,0,.18),
+            transparent 18%,
+            transparent 80%,
+            rgba(0,0,0,.25)
+        );
+}
+
+.viewer-empty{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    color:var(--muted);
+    text-align:center;
+    padding:30px;
+    z-index:4;
+}
+
+.viewer-empty strong{
+    color:var(--text);
+}
+
+.viewer-hud{
+    position:absolute;
+    top:12px;
+    left:12px;
+    background:rgba(5,11,16,.78);
+    border:1px solid rgba(91,128,151,.45);
+    border-radius:9px;
+    padding:10px 12px;
+    backdrop-filter:blur(8px);
+    pointer-events:none;
+    z-index:5;
+}
+
+.viewer-hud strong{
+    display:block;
+    font-size:12px;
+}
+
+.viewer-hud span{
+    display:block;
+    color:var(--muted);
+    font-size:10px;
+    margin-top:2px;
+}
+
+.viewer-status{
+    position:absolute;
+    right:12px;
+    top:12px;
+    z-index:5;
+}
+
+.viewer-controls{
+    position:absolute;
+    bottom:12px;
+    left:12px;
+    display:flex;
+    gap:7px;
+    z-index:5;
+}
+
+.viewer-tools{
+    display:flex;
+    gap:7px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.range{
+    accent-color:var(--accent);
+}
+
+.side{
+    display:grid;
+    gap:14px;
+}
+
+.metric-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    padding:13px;
+}
+
+.metric{
+    padding:11px;
+    border:1px solid var(--line);
+    background:#0b141c;
+    border-radius:9px;
+}
+
+.metric .label{
+    font-size:10px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+
+.metric .value{
+    font-size:18px;
+    font-weight:800;
+    margin-top:3px;
+}
+
+.section{
+    padding:13px;
+}
+
+.badge{
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.08em;
+    padding:4px 7px;
+    border-radius:6px;
+    background:#17242e;
+    border:1px solid var(--line);
+}
+
+.assessment{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.dot{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    background:#60727f;
+}
+
+.dot.warn{
+    background:var(--warn);
+}
+
+.dot.bad{
+    background:var(--bad);
+}
+
+.dot.good{
+    background:var(--good);
+}
+
+.rows{
+    display:grid;
+    gap:6px;
+    margin-top:10px;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    border-top:1px solid #1c2a34;
+    padding-top:6px;
+}
+
+.row span:last-child{
+    font-weight:750;
+}
+
+.recommendation{
+    background:#0b141c;
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:10px;
+    margin-top:9px;
+}
+
+.recommendation strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.rec-list{
+    margin:7px 0 0;
+    padding-left:17px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.notice{
+    margin-top:8px;
+    padding:8px 10px;
+    border:1px solid #3c3220;
+    background:#19140b;
+    border-radius:8px;
+    color:#d9c790;
+    font-size:10px;
+}
+
+.gallery-card{
+    margin-top:14px;
+}
+
+.gallery-top{
+    padding:12px 15px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.gallery-grid{
+    padding:13px;
+    display:grid;
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:8px;
+}
+
+.thumb{
+    background:#091119;
+    border:1px solid var(--line);
+    border-radius:8px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.thumb:hover{
+    transform:translateY(-1px);
+    border-color:#47677b;
+}
+
+.thumb.selected{
+    border-color:var(--accent);
+    box-shadow:0 0 0 1px rgba(93,183,239,.25) inset;
+}
+
+.thumb img{
+    width:100%;
+    aspect-ratio:4/3;
+    display:block;
+    object-fit:cover;
+}
+
+.thumb label{
+    display:block;
+    font-size:9px;
+    color:var(--muted);
+    padding:6px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.inspect{
+    display:grid;
+    grid-template-columns:1.3fr .7fr;
+    gap:12px;
+    padding:13px;
+}
+
+.inspect-image{
+    min-height:290px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    background:#050a0f;
+    display:grid;
+    place-items:center;
+}
+
+.inspect-image img{
+    width:100%;
+    height:100%;
+    max-height:500px;
+    object-fit:contain;
+}
+
+.nav{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:10px;
+    flex-wrap:wrap;
+}
+
+.nav .input{
+    width:80px;
+    text-align:center;
+}
+
+.progress{
+    height:5px;
+    background:#14212b;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.progress i{
+    display:block;
+    height:100%;
+    background:var(--accent);
+    width:0;
+    transition:width .25s ease;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(2,7,11,.72);
+    display:none;
+    place-items:center;
+    z-index:50;
+}
+
+.modal.show{
+    display:grid;
+}
+
+.modalbox{
+    width:min(560px,calc(100vw - 30px));
+    background:#0e1821;
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+}
+
+.modalbody{
+    padding:15px;
+}
+
+.option{
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:11px;
+    margin-bottom:8px;
+    background:#0b141c;
+}
+
+.option small{
+    display:block;
+    color:var(--muted);
+    margin-top:4px;
+}
+
+.actions{
+    padding:12px 15px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:flex-end;
+    gap:7px;
+}
+
+.toast{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    background:#0e1821;
+    border:1px solid var(--line);
+    padding:10px 12px;
+    border-radius:8px;
+    display:none;
+    z-index:100;
+}
+
+.toast.show{
+    display:block;
+}
+
+.footer-note{
+    padding:10px 15px;
+    color:var(--muted);
+    font-size:10px;
+    border-top:1px solid var(--line);
+}
+
+@media(max-width:1100px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .gallery-grid{
+        grid-template-columns:repeat(4,minmax(0,1fr));
+    }
+
+    .viewer{
+        height:560px;
+    }
+}
+
+@media(max-width:700px){
+    .gallery-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .inspect{
+        grid-template-columns:1fr;
+    }
+
+    .viewer{
+        height:480px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="top">
+
+```
+<div class="brand">
+
+    <div class="mark">
+        AS
+    </div>
+
+    <div>
+
+        <div class="eyebrow">
+            Post-disaster digital twin & response intelligence
+        </div>
+
+        <h1>
+            AeroSplat Command Center
+        </h1>
+
+    </div>
+
+</div>
+
+<div class="top-right">
+
+    <div
+        class="eyebrow"
+        id="stageText"
+    >
+        Ready
+    </div>
+
+    <div
+        class="pill"
+        id="health"
+    >
+        SYSTEM
+    </div>
+
+</div>
+```
+
+</header>
+
+<main class="wrap">
+
+```
+<!-- ==================================================
+     TOOLBAR
+=================================================== -->
+
+<div class="toolbar">
+
+    <select
+        id="sceneSelect"
+        class="select"
+    >
+        <option>
+            Loading incidents…
+        </option>
+    </select>
+
+    <button
+        class="btn"
+        id="newSceneBtn"
+    >
+        + New incident
+    </button>
+
+    <button
+        class="btn"
+        id="addBtn"
+    >
+        + Add drone images
+    </button>
+
+    <button
+        class="btn"
+        id="evidenceBtn"
+    >
+        Add evidence
+    </button>
+
+    <button
+        class="btn primary"
+        id="rebuildBtn"
+        disabled
+    >
+        Rebuild digital twin
+    </button>
+
+    <button
+        class="btn"
+        id="analyzeBtn"
+    >
+        Run screening
+    </button>
+
+</div>
+
+
+<!-- ==================================================
+     MAIN GRID
+=================================================== -->
+
+<div class="grid">
+
+
+    <!-- ==================================================
+         3D DIGITAL TWIN
+    =================================================== -->
+
+    <section class="card">
+
+        <div class="head">
+
+            <div>
+
+                <div class="title">
+                    3D Digital Twin
+                </div>
+
+                <div
+                    class="sub"
+                    id="modelSub"
+                >
+                    No trained model
+                </div>
+
+            </div>
+
+
+            <div class="viewer-tools">
+
+                <label class="sub">
+                    Opacity
+                </label>
+
+                <input
+                    id="alphaRange"
+                    class="range"
+                    type="range"
+                    min="0"
+                    max="20"
+                    value="1"
+                >
+
+                <span
+                    class="sub"
+                    id="alphaValue"
+                >
+                    1%
+                </span>
+
+                <button
+                    class="btn"
+                    id="applyOpacity"
+                >
+                    Apply
+                </button>
+
+                <button
+                    class="btn"
+                    id="reset3d"
+                >
+                    Reset
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="viewer">
+
+            <div
+                id="viewerHost"
+                class="viewer-host"
+            ></div>
+
+
+            <div
+                id="viewerEmpty"
+                class="viewer-empty"
+            >
+
+                <div>
+
+                    <strong>
+                        Loading digital twin…
+                    </strong>
+
+                    <br>
+
+                    <span>
+                        Preparing Gaussian scene
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="viewer-overlay"></div>
+
+
+            <div class="viewer-hud">
+
+                <strong
+                    id="viewerTitle"
+                >
+                    Gaussian Splat Digital Twin
+                </strong>
+
+                <span
+                    id="viewerMeta"
+                >
+                    Waiting for trained model
+                </span>
+
+            </div>
+
+
+            <div class="viewer-status">
+
+                <span
+                    class="badge"
+                    id="viewerState"
+                >
+                    INITIALIZING
+                </span>
+
+            </div>
+
+
+            <div class="viewer-controls">
+
+                <button
+                    class="btn"
+                    id="front3d"
+                >
+                    Front
+                </button>
+
+                <button
+                    class="btn"
+                    id="side3d"
+                >
+                    Side
+                </button>
+
+                <button
+                    class="btn"
+                    id="top3d"
+                >
+                    Top
+                </button>
+
+                <button
+                    class="btn"
+                    id="fit3d"
+                >
+                    Fit Scene
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-note">
+
+            Drag:
+            orbit
+            ·
+            Right drag:
+            pan
+            ·
+            Wheel:
+            zoom
+            ·
+            Use
+            <b>Locate in 3D</b>
+            to synchronize a selected inspection frame
+            with its COLMAP camera when that endpoint is available.
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         SIDE PANEL
+    =================================================== -->
+
+    <aside class="side">
+
+
+        <!-- OPERATIONAL ASSESSMENT -->
+
+        <div class="card">
+
+            <div class="head">
+
+                <div>
+
+                    <div class="title">
+                        Operational Assessment
+                    </div>
+
+                    <div class="sub">
+                        Evidence quality and screening
+                    </div>
+
+                </div>
+
+                <span
+                    class="badge"
+                    id="triage"
+                >
+                    PENDING
+                </span>
+
+            </div>
+
+
+            <div class="section">
+
+                <div class="assessment">
+
+                    <div
+                        class="dot"
+                        id="triDot"
+                    ></div>
+
+                    <div>
+
+                        <strong
+                            id="triageSub"
+                        >
+                            Awaiting screening
+                        </strong>
+
+                        <div
+                            class="sub"
+                            id="recLevel"
+                        >
+                            REVIEW
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="recommendation">
+
+                    <strong>
+                        Recommendation
+                    </strong>
+
+                    <div
+                        class="sub"
+                        id="recText"
+                    >
+                        Run evidence screening before making
+                        safety decisions.
+                    </div>
+
+                    <ul
+                        class="rec-list"
+                        id="recList"
+                    ></ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECONSTRUCTION -->
+
+        <div class="card">
+
+            <div class="head">
+
+                <div>
+
+                    <div class="title">
+                        Reconstruction Integrity
+                    </div>
+
+                    <div class="sub">
+                        Live COLMAP / 3DGS state
+                    </div>
+
+                </div>
+
+                <span
+                    class="badge"
+                    id="modelStatus"
+                >
+                    NONE
+                </span>
+
+            </div>
+
+
+            <div class="metric-grid">
+
+                <div class="metric">
+
+                    <div class="label">
+                        Images
+                    </div>
+
+                    <div
+                        class="value"
+                        id="mImages"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="label">
+                        Registered
+                    </div>
+
+                    <div
+                        class="value"
+                        id="mReg"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="label">
+                        3D Points
+                    </div>
+
+                    <div
+                        class="value"
+                        id="mPts"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="label">
+                        Observations
+                    </div>
+
+                    <div
+                        class="value"
+                        id="mObs"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="label">
+                        Reprojection
+                    </div>
+
+                    <div
+                        class="value"
+                        id="mReproj"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="label">
+                        Camera
+                    </div>
+
+                    <div
+                        class="value"
+                        id="mCam"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="section">
+
+                <div
+                    class="sub"
+                    id="rebuildNote"
+                >
+                    Digital twin status.
+                </div>
+
+                <div
+                    class="progress"
+                    style="margin-top:8px"
+                >
+
+                    <i id="bar"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STRUCTURAL SCREENING -->
+
+        <div class="card">
+
+            <div class="head">
+
+                <div>
+
+                    <div class="title">
+                        Structural Screening
+                    </div>
+
+                    <div class="sub">
+                        Visual / geometric evidence only
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="rows section">
+
+                <div class="row">
+
+                    <span>
+                        Frames screened
+                    </span>
+
+                    <span id="dFrames">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Mean edge variance
+                    </span>
+
+                    <span id="dSharp">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Mean brightness
+                    </span>
+
+                    <span id="dBright">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Dark-frame ratio
+                    </span>
+
+                    <span id="dDark">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Surface inclination
+                    </span>
+
+                    <span id="dIncline">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Crack length
+                    </span>
+
+                    <span>
+                        Not calibrated
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Crack width
+                    </span>
+
+                    <span>
+                        Not calibrated
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Wall tilt
+                    </span>
+
+                    <span>
+                        Not calibrated
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <span>
+                        Rubble volume
+                    </span>
+
+                    <span>
+                        Not calibrated
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="section">
+
+                <div class="notice">
+
+                    Screening indicators are evidence-quality
+                    signals. Physical structural quantities require
+                    calibrated segmentation and metric geometry.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+</div>
+
+
+<!-- ==================================================
+     IMAGE INSPECTION
+=================================================== -->
+
+<section class="card gallery-card">
+
+    <div class="gallery-top">
+
+        <div>
+
+            <div class="title">
+                Drone Image Inspection
+            </div>
+
+            <div class="sub">
+
+                <span id="imgCount">
+                    0
+                </span>
+
+                reconstruction images
+
+                ·
+
+                <span id="evidenceCount">
+                    0
+                </span>
+
+                evidence images
+
+            </div>
+
+        </div>
+
+
+        <div
+            style="
+                display:flex;
+                gap:7px;
+                flex-wrap:wrap;
+                align-items:center
+            "
+        >
+
+            <input
+                class="input"
+                id="search"
+                placeholder="Search frame…"
+            >
+
+            <select
+                class="select"
+                id="pageSize"
+                style="min-width:110px"
+            >
+
+                <option>
+                    18
+                </option>
+
+                <option selected>
+                    24
+                </option>
+
+                <option>
+                    48
+                </option>
+
+            </select>
+
+
+            <button
+                class="btn"
+                id="pagePrev"
+            >
+                ←
+            </button>
+
+
+            <button
+                class="btn"
+                id="pageNext"
+            >
+                →
+            </button>
+
+
+            <span
+                class="sub"
+                id="pageInfo"
+            ></span>
+
+        </div>
+
+    </div>
+
+
+    <div class="inspect">
+
+        <div class="inspect-image">
+
+            <img
+                id="mainImage"
+                class="hidden"
+                alt="Selected drone frame"
+            >
+
+            <div
+                id="imageEmpty"
+                class="empty"
+            >
+                Select a frame
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <div
+                class="title"
+                id="frameInfo"
+            >
+                No frame selected
+            </div>
+
+
+            <div
+                class="sub"
+                id="imageMeta"
+                style="margin-top:4px"
+            >
+                —
+            </div>
+
+
+            <div class="nav">
+
+                <button
+                    class="btn"
+                    id="firstBtn"
+                >
+                    ⏮
+                </button>
+
+                <button
+                    class="btn"
+                    id="prevBtn"
+                >
+                    ←
+                </button>
+
+                <input
+                    class="input"
+                    id="frameInput"
+                    value="1"
+                >
+
+                <button
+                    class="btn"
+                    id="nextBtn"
+                >
+                    →
+                </button>
+
+                <button
+                    class="btn"
+                    id="lastBtn"
+                >
+                    ⏭
+                </button>
+
+                <button
+                    class="btn primary"
+                    id="locate3d"
+                >
+                    Locate in 3D
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="galleryGrid"
+        class="gallery-grid"
+    ></div>
+
+</section>
+```
+
+</main>
+
+<!-- ======================================================
+     IMAGE HANDLING MODAL
+======================================================= -->
+
+<div
+    class="modal"
+    id="handlingModal"
+>
+
+```
+<div class="modalbox">
+
+    <div class="head">
+
+        <div>
+
+            <div class="title">
+                Add Imagery
+            </div>
+
+            <div class="sub">
+                Choose how these images affect the incident
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="modalbody">
+
+        <div class="option">
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="handling"
+                    value="append"
+                    checked
+                >
+
+                Append to current scene
+
+            </label>
+
+            <small>
+
+                Images become part of the next reconstruction.
+                The current twin stays visible and becomes STALE.
+
+            </small>
+
+        </div>
+
+
+        <div class="option">
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="handling"
+                    value="evidence"
+                >
+
+                Evidence only
+
+            </label>
+
+            <small>
+
+                Stored with the incident but excluded from
+                COLMAP and 3DGS reconstruction.
+
+            </small>
+
+        </div>
+
+
+        <div class="option">
+
+            <label>
+
+                <input
+                    type="radio"
+                    name="handling"
+                    value="new"
+                >
+
+                New incident
+
+            </label>
+
+            <small>
+
+                Create a separate scene without modifying
+                the current incident.
+
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+            class="btn"
+            id="cancelHandling"
+        >
+            Cancel
+        </button>
+
+        <button
+            class="btn primary"
+            id="continueHandling"
+        >
+            Continue
+        </button>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- ======================================================
+     NEW INCIDENT MODAL
+======================================================= -->
+
+<div
+    class="modal"
+    id="sceneModal"
+>
+
+```
+<div class="modalbox">
+
+    <div class="head">
+
+        <div class="title">
+            New Incident
+        </div>
+
+    </div>
+
+
+    <div class="modalbody">
+
+        <input
+            class="input"
+            id="sceneNameInput"
+            placeholder="Incident name"
+            style="width:100%;margin-bottom:8px"
+        >
+
+        <input
+            class="input"
+            id="sceneDescInput"
+            placeholder="Description"
+            style="width:100%"
+        >
+
+    </div>
+
+
+    <div class="actions">
+
+        <button
+            class="btn"
+            id="cancelScene"
+        >
+            Cancel
+        </button>
+
+        <button
+            class="btn primary"
+            id="createScene"
+        >
+            Create incident
+        </button>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<input
+id="fileInput"
+type="file"
+accept="image/*"
+multiple
+class="hidden"
+
+>
+
+<input
+id="evidenceInput"
+type="file"
+accept="image/*"
+multiple
+class="hidden"
+
+>
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+<!-- ======================================================
+     MODERN LOCAL ES-MODULE VIEWER
+======================================================= -->
+
+<script type="importmap">
+{
+    "imports": {
+        "three": "/static/vendor/three.module.js",
+        "gaussian-splats-3d": "/static/vendor/gaussian-splats-3d.module.js"
+    }
+}
+</script>
+
+<script type="module">
+
+import * as THREE from "three";
+import * as GaussianSplats3D from "gaussian-splats-3d";
+
+
+/* ======================================================
+   GLOBAL STATE
+====================================================== */
+
+const $ = id =>
+    document.getElementById(id);
+
+let state = null;
+
+let selected = 0;
+
+let page = 1;
+
+let viewer = null;
+
+let viewerSignature = null;
+
+let viewerReady = false;
+
+let sceneBounds = null;
+
+
+/* ======================================================
+   HELPERS
+====================================================== */
+
+function esc(value){
+
+    return String(value ?? "")
+        .replace(/[&<>"']/g, c => ({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            '"':"&quot;",
+            "'":"&#39;"
+        }[c]));
+
+}
+
+
+function fmt(value){
+
+    return Number(value || 0)
+        .toLocaleString();
+
+}
+
+
+function bytes(value){
+
+    if(!value)
+        return "—";
+
+    if(value < 1048576)
+        return (value / 1024).toFixed(1) + " KB";
+
+    if(value < 1073741824)
+        return (value / 1048576).toFixed(1) + " MB";
+
+    return (value / 1073741824).toFixed(2) + " GB";
+
+}
+
+
+function toast(message){
+
+    $("toast").textContent =
+        message;
+
+    $("toast").classList.add(
+        "show"
+    );
+
+    setTimeout(() => {
+
+        $("toast")
+            .classList
+            .remove("show");
+
+    },2600);
+
+}
+
+
+/* ======================================================
+   APPLICATION STATE
+====================================================== */
+
+async function getState(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/state",
+                {
+                    cache:"no-store"
+                }
+            );
+
+        if(!response.ok){
+
+            throw new Error(
+                await response.text()
+            );
+
+        }
+
+        state =
+            await response.json();
+
+        render();
+
+    }
+    catch(error){
+
+        console.error(
+            "State error:",
+            error
+        );
+
+        $("health").textContent =
+            "API OFFLINE";
+
+        $("health").className =
+            "pill error";
+
+    }
+
+}
+
+
+/* ======================================================
+   SCENES
+====================================================== */
+
+async function loadScenes(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/scenes",
+                {
+                    cache:"no-store"
+                }
+            );
+
+        if(!response.ok)
+            throw new Error(
+                "Unable to load incidents."
+            );
+
+        const data =
+            await response.json();
+
+        const scenes =
+            data.scenes || [];
+
+
+        $("sceneSelect").innerHTML =
+            scenes.map(scene => `
+
+                <option
+                    value="${esc(scene.id)}"
+                    ${
+                        scene.id ===
+                        data.active_scene_id
+                            ? "selected"
+                            : ""
+                    }
+                >
+                    ${esc(scene.name)}
+                </option>
+
+            `).join("");
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        $("sceneSelect").innerHTML =
+            `
+            <option>
+                Unable to load incidents
+            </option>
+            `;
+
+    }
+
+}
+
+
+/* ======================================================
+   SCENE BOUNDS
+====================================================== */
+
+async function getSceneBounds(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/model/bounds",
+                {
+                    cache:"no-store"
+                }
+            );
+
+        if(!response.ok)
+            throw new Error(
+                "Model bounds unavailable."
+            );
+
+        return await response.json();
+
+    }
+    catch(error){
+
+        console.warn(
+            "Bounds unavailable:",
+            error
+        );
+
+        return {
+            center:[0,0,0],
+            radius:5
+        };
+
+    }
+
+}
+
+
+/* ======================================================
+   CAMERA
+====================================================== */
+
+function cameraDistance(){
+
+    const radius =
+        Math.max(
+            Number(
+                sceneBounds?.radius || 5
+            ),
+            0.5
+        );
+
+    return Math.max(
+        radius * 2.4,
+        2
+    );
+
+}
+
+
+function setCameraView(mode){
+
+    if(
+        !viewer ||
+        !viewer.camera
+    )
+        return;
+
+
+    const center =
+        sceneBounds?.center ||
+        [0,0,0];
+
+
+    const distance =
+        cameraDistance();
+
+
+    const camera =
+        viewer.camera;
+
+
+    if(mode === "front"){
+
+        camera.position.set(
+            center[0],
+            center[1] - distance,
+            center[2]
+        );
+
+    }
+    else if(mode === "side"){
+
+        camera.position.set(
+            center[0] + distance,
+            center[1],
+            center[2]
+        );
+
+    }
+    else if(mode === "top"){
+
+        camera.position.set(
+            center[0],
+            center[1],
+            center[2] + distance
+        );
+
+    }
+    else{
+
+        camera.position.set(
+            center[0] + distance * 0.85,
+            center[1] - distance * 0.95,
+            center[2] + distance * 0.65
+        );
+
+    }
+
+
+    camera.lookAt(
+        center[0],
+        center[1],
+        center[2]
+    );
+
+
+    if(
+        camera.updateProjectionMatrix
+    ){
+
+        camera.updateProjectionMatrix();
+
+    }
+
+}
+
+
+/* ======================================================
+   REAL GAUSSIAN SPLAT VIEWER
+====================================================== */
+
+async function loadGaussian(){
+
+    if(
+        !state?.model_ready ||
+        !state?.model_url
+    ){
+
+        if(viewer){
+
+            try{
+                viewer.dispose();
+            }
+            catch(_){}
+
+        }
+
+        viewer = null;
+
+        viewerReady = false;
+
+        $("viewerState").textContent =
+            "NO MODEL";
+
+        $("viewerEmpty").style.display =
+            "grid";
+
+        $("viewerEmpty").innerHTML = `
+            <div>
+                <strong>
+                    No trained digital twin
+                </strong>
+                <br>
+                <span>
+                    Add reconstruction imagery and build a model.
+                </span>
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    try{
+
+        $("viewerState").textContent =
+            "LOADING";
+
+        $("viewerEmpty").style.display =
+            "grid";
+
+        $("viewerEmpty").innerHTML = `
+            <div>
+                <strong>
+                    Loading Gaussian digital twin…
+                </strong>
+                <br>
+                <span>
+                    Loading GraphDeco scene
+                </span>
+            </div>
+        `;
+
+
+        if(viewer){
+
+            try{
+                viewer.dispose();
+            }
+            catch(_){}
+
+        }
+
+        viewer = null;
+
+        viewerReady = false;
+
+
+        /*
+         * Get actual spatial bounds.
+         */
+
+        sceneBounds =
+            await getSceneBounds();
+
+
+        const center =
+            sceneBounds?.center ||
+            [0,0,0];
+
+
+        const distance =
+            cameraDistance();
+
+
+        const cameraPosition = [
+
+            center[0] +
+            distance * 0.85,
+
+            center[1] -
+            distance * 0.95,
+
+            center[2] +
+            distance * 0.65
+
+        ];
+
+
+        /*
+         * Create actual Gaussian viewer.
+         */
+
+        viewer =
+            new GaussianSplats3D.Viewer({
+
+                rootElement:
+                    $("viewerHost"),
+
+                cameraUp:[
+                    0,
+                    -1,
+                    -0.6
+                ],
+
+                initialCameraPosition:
+                    cameraPosition,
+
+                initialCameraLookAt:
+                    center,
+
+                gpuAcceleratedSort:
+                    true,
+
+                sharedMemoryForWorkers:
+                    false,
+
+                integerBasedSort:
+                    true,
+
+                halfPrecisionCovariancesOnGPU:
+                    true,
+
+                sphericalHarmonicsDegree:
+                    2,
+
+                antialiased:
+                    false,
+
+                renderMode:
+                    GaussianSplats3D.RenderMode
+                        ? GaussianSplats3D.RenderMode.Always
+                        : undefined,
+
+                sceneRevealMode:
+                    GaussianSplats3D.SceneRevealMode
+                        ? GaussianSplats3D.SceneRevealMode.Instant
+                        : undefined
+
+            });
+
+
+        /*
+         * Explicitly load GraphDeco PLY.
+         */
+
+        const options = {
+
+            showLoadingUI:
+                true,
+
+            progressiveLoad:
+                false,
+
+            splatAlphaRemovalThreshold:
+                Number(
+                    $("alphaRange").value
+                )
+
+        };
+
+
+        if(
+            GaussianSplats3D.SceneFormat
+        ){
+
+            options.format =
+                GaussianSplats3D.SceneFormat.Ply;
+
+        }
+
+
+        console.log(
+            "Loading model:",
+            state.model_url
+        );
+
+
+        await viewer.addSplatScene(
+            state.model_url,
+            options
+        );
+
+
+        viewer.start();
+
+
+        viewerReady = true;
+
+
+        $("viewerState").textContent =
+            "READY";
+
+
+        $("viewerEmpty").style.display =
+            "none";
+
+
+        $("viewerTitle").textContent =
+            "Gaussian Splat Digital Twin";
+
+
+        $("viewerMeta").textContent =
+            `Iteration ${fmt(
+                state.model_iteration
+            )} · `
+            + `${fmt(
+                state.points3d
+            )} reconstructed points`;
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Gaussian viewer error:",
+            error
+        );
+
+
+        viewer = null;
+
+        viewerReady = false;
+
+
+        $("viewerState").textContent =
+            "ERROR";
+
+
+        $("viewerEmpty").style.display =
+            "grid";
+
+
+        $("viewerEmpty").innerHTML = `
+
+            <div>
+
+                <strong>
+                    Gaussian twin failed to load
+                </strong>
+
+                <br><br>
+
+                <span>
+                    ${esc(
+                        error?.message ||
+                        error
+                    )}
+                </span>
+
+                <br><br>
+
+                <button
+                    class="btn"
+                    id="retryViewerBtn"
+                >
+                    Retry viewer
+                </button>
+
+            </div>
+
+        `;
+
+
+        const retry =
+            $("retryViewerBtn");
+
+
+        if(retry){
+
+            retry.onclick =
+                () => {
+
+                    viewerSignature =
+                        null;
+
+                    loadGaussian();
+
+                };
+
+        }
+
+    }
+
+}
+
+
+/* ======================================================
+   DASHBOARD RENDER
+====================================================== */
+
+function render(){
+
+    if(!state)
+        return;
+
+
+    const status =
+        state.model_status ||
+        "NONE";
+
+
+    /*
+     * System status
+     */
+
+    if(state.busy){
+
+        $("health").textContent =
+            "PROCESSING";
+
+        $("health").className =
+            "pill busy";
+
+    }
+    else if(status === "STALE"){
+
+        $("health").textContent =
+            "MODEL STALE";
+
+        $("health").className =
+            "pill stale";
+
+    }
+    else if(state.model_ready){
+
+        $("health").textContent =
+            "SYSTEM READY";
+
+        $("health").className =
+            "pill ready";
+
+    }
+    else{
+
+        $("health").textContent =
+            "NO MODEL";
+
+        $("health").className =
+            "pill";
+
+    }
+
+
+    $("stageText").textContent =
+        state.status ||
+        "Ready";
+
+
+    $("bar").style.width =
+        `${state.progress || 0}%`;
+
+
+    /*
+     * Reconstruction
+     */
+
+    $("mImages").textContent =
+        fmt(state.images_count);
+
+
+    $("mReg").textContent =
+        fmt(state.registered_images);
+
+
+    $("mPts").textContent =
+        fmt(state.points3d);
+
+
+    $("mObs").textContent =
+        fmt(state.observations);
+
+
+    $("mReproj").textContent =
+        state.mean_reprojection_error_px != null
+            ? Number(
+                state.mean_reprojection_error_px
+            ).toFixed(2)
+              + " px"
+            : "—";
+
+
+    $("mCam").textContent =
+        state.camera_model ||
+        "—";
+
+
+    $("modelStatus").textContent =
+        status;
+
+
+    $("modelSub").textContent =
+        state.model_ready
+
+            ? `GraphDeco 3DGS · iteration ${
+                fmt(state.model_iteration)
+            } · ${
+                bytes(state.model_size_bytes)
+            }`
+
+            : "No trained Gaussian model";
+
+
+    /*
+     * Rebuild status
+     */
+
+    if(state.busy){
+
+        $("rebuildNote").textContent =
+            "Current twin remains visible while "
+            + "the new reconstruction runs.";
+
+    }
+    else if(state.model_stale){
+
+        $("rebuildNote").textContent =
+            "New reconstruction imagery is available. "
+            + "Rebuild to update the digital twin.";
+
+    }
+    else if(state.model_ready){
+
+        $("rebuildNote").textContent =
+            "Digital twin synchronized with "
+            + "the current dataset.";
+
+    }
+    else{
+
+        $("rebuildNote").textContent =
+            "Add at least three overlapping images.";
+
+    }
+
+
+    $("rebuildBtn").disabled =
+        !!state.busy ||
+        !state.model_stale ||
+        Number(
+            state.reconstruction_images_count ||
+            0
+        ) < 3;
+
+
+    /*
+     * Triage
+     */
+
+    const triage =
+        state.triage ||
+        {};
+
+
+    const damage =
+        state.damage ||
+        {};
+
+
+    $("triage").textContent =
+        triage.label ||
+        "PENDING";
+
+
+    $("triageSub").textContent =
+        triage.severity ||
+        "Awaiting screening";
+
+
+    $("recLevel").textContent =
+        triage.recommendation_level ||
+        "REVIEW";
+
+
+    let dotClass = "dot";
+
+
+    if(
+        triage.label === "RED" ||
+        triage.label === "ORANGE"
+    ){
+
+        dotClass += " bad";
+
+    }
+    else if(
+        triage.label === "YELLOW"
+    ){
+
+        dotClass += " warn";
+
+    }
+    else if(
+        triage.label === "GREEN"
+    ){
+
+        dotClass += " good";
+
+    }
+
+
+    $("triDot").className =
+        dotClass;
+
+
+    $("recText").textContent =
+        triage.recommendation ||
+        triage.severity ||
+        "Run screening analysis.";
+
+
+    $("recList").innerHTML =
+        (
+            triage.directives ||
+            []
+        )
+        .map(
+            value =>
+                `<li>${esc(value)}</li>`
+        )
+        .join("");
+
+
+    /*
+     * Structural screening
+     */
+
+    $("dFrames").textContent =
+        fmt(
+            damage.images_analyzed
+        );
+
+
+    $("dSharp").textContent =
+        damage.mean_edge_variance != null
+            ? Number(
+                damage.mean_edge_variance
+            ).toFixed(2)
+            : "—";
+
+
+    $("dBright").textContent =
+        damage.mean_brightness != null
+            ? Number(
+                damage.mean_brightness
+            ).toFixed(2)
+            : "—";
+
+
+    $("dDark").textContent =
+        damage.dark_frame_ratio != null
+
+            ? (
+                Number(
+                    damage.dark_frame_ratio
+                ) * 100
+              ).toFixed(1) + "%"
+
+            : "—";
+
+
+    $("dIncline").textContent =
+        damage.scene_surface_inclination_deg != null
+
+            ? Number(
+                damage.scene_surface_inclination_deg
+            ).toFixed(2) + "°"
+
+            : "—";
+
+
+    /*
+     * Image counters
+     */
+
+    $("imgCount").textContent =
+        fmt(
+            state.reconstruction_images_count
+        );
+
+
+    $("evidenceCount").textContent =
+        fmt(
+            state.evidence_images_count
+        );
+
+
+    renderGallery();
+
+
+    /*
+     * Only reload viewer when
+     * model actually changed.
+     */
+
+    const signature =
+        state.model_ready
+
+            ? [
+                state.active_scene_id,
+                state.model_iteration,
+                state.model_size_bytes,
+                state.model_url
+            ].join(":")
+
+            : null;
+
+
+    if(
+        signature !==
+        viewerSignature
+    ){
+
+        viewerSignature =
+            signature;
+
+        loadGaussian();
+
+    }
+
+
+    $("viewerMeta").textContent =
+        state.model_ready
+
+            ? `Iteration ${
+                fmt(state.model_iteration)
+              } · ${
+                fmt(state.points3d)
+              } COLMAP points`
+
+            : "Waiting for model";
+
+}
+
+
+/* ======================================================
+   GALLERY
+====================================================== */
+
+function renderGallery(){
+
+    const images =
+        state?.images ||
+        [];
+
+
+    const query =
+        (
+            $("search").value ||
+            ""
+        ).toLowerCase();
+
+
+    const filtered =
+        images.filter(
+            image =>
+                image.name
+                    .toLowerCase()
+                    .includes(query)
+        );
+
+
+    const pageSize =
+        parseInt(
+            $("pageSize").value ||
+            "24"
+        );
+
+
+    const pageCount =
+        Math.max(
+            1,
+            Math.ceil(
+                filtered.length /
+                pageSize
+            )
+        );
+
+
+    if(page > pageCount)
+        page = pageCount;
+
+
+    $("pageInfo").textContent =
+        `Page ${page}/${pageCount} · ${filtered.length}`;
+
+
+    const start =
+        (page - 1) *
+        pageSize;
+
+
+    const items =
+        filtered.slice(
+            start,
+            start + pageSize
+        );
+
+
+    $("galleryGrid").innerHTML =
+        items.map(image => {
+
+            const index =
+                images.indexOf(
+                    image
+                );
+
+
+            return `
+
+                <div
+                    class="thumb ${
+                        index === selected
+                            ? "selected"
+                            : ""
+                    }"
+                    data-index="${index}"
+                >
+
+                    <img
+                        loading="lazy"
+                        src="${
+                            image.url
+                        }?v=${
+                            encodeURIComponent(
+                                state.updated_at ||
+                                ""
+                            )
+                        }"
+                        alt=""
+                    >
+
+                    <label>
+                        ${esc(image.name)}
+                    </label>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+
+    document
+        .querySelectorAll(".thumb")
+        .forEach(element => {
+
+            element.onclick =
+                () => {
+
+                    selectImage(
+                        Number(
+                            element.dataset.index
+                        )
+                    );
+
+                };
+
+        });
+
+
+    if(images.length){
+
+        selectImage(
+            Math.min(
+                selected,
+                images.length - 1
+            )
+        );
+
+    }
+
+}
+
+
+/* ======================================================
+   IMAGE SELECT
+====================================================== */
+
+function selectImage(index){
+
+    if(
+        !state?.images?.length
+    )
+        return;
+
+
+    selected =
+        Math.max(
+            0,
+            Math.min(
+                index,
+                state.images.length - 1
+            )
+        );
+
+
+    const image =
+        state.images[selected];
+
+
+    $("mainImage").src =
+        `${image.url}?v=${
+            encodeURIComponent(
+                state.updated_at ||
+                ""
+            )
+        }`;
+
+
+    $("mainImage")
+        .classList
+        .remove("hidden");
+
+
+    $("imageEmpty")
+        .classList
+        .add("hidden");
+
+
+    $("frameInfo").textContent =
+        `FRAME ${
+            String(
+                selected + 1
+            ).padStart(
+                3,
+                "0"
+            )
+        } · ${image.name}`;
+
+
+    $("imageMeta").textContent =
+        `Frame ${
+            selected + 1
+        } of ${
+            state.images.length
+        } · ${
+            state.active_scene_name ||
+            ""
+        }`;
+
+
+    $("frameInput").value =
+        selected + 1;
+
+
+    document
+        .querySelectorAll(".thumb")
+        .forEach(element => {
+
+            element.classList.toggle(
+
+                "selected",
+
+                Number(
+                    element.dataset.index
+                ) === selected
+
+            );
+
+        });
+
+}
+
+
+/* ======================================================
+   VIEWER BUTTONS
+====================================================== */
+
+$("front3d").onclick =
+    () =>
+        setCameraView(
+            "front"
+        );
+
+
+$("side3d").onclick =
+    () =>
+        setCameraView(
+            "side"
+        );
+
+
+$("top3d").onclick =
+    () =>
+        setCameraView(
+            "top"
+        );
+
+
+$("fit3d").onclick =
+    () =>
+        setCameraView(
+            "fit"
+        );
+
+
+$("reset3d").onclick =
+    () =>
+        setCameraView(
+            "fit"
+        );
+
+
+$("alphaRange").oninput =
+    () => {
+
+        $("alphaValue").textContent =
+            `${$("alphaRange").value}%`;
+
+    };
+
+
+$("applyOpacity").onclick =
+    () => {
+
+        if(!viewerReady){
+
+            toast(
+                "3D viewer is not ready."
+            );
+
+            return;
+
+        }
+
+
+        viewerSignature =
+            null;
+
+
+        loadGaussian();
+
+    };
+
+
+/* ======================================================
+   LOCATE 3D CAMERA
+====================================================== */
+
+$("locate3d").onclick =
+    async () => {
+
+        if(!viewer){
+
+            toast(
+                "3D viewer is not ready."
+            );
+
+            return;
+
+        }
+
+
+        const image =
+            state?.images?.[selected];
+
+
+        if(!image){
+
+            toast(
+                "No frame selected."
+            );
+
+            return;
+
+        }
+
+
+        try{
+
+            const response =
+                await fetch(
+                    `/api/camera/${
+                        encodeURIComponent(
+                            image.name
+                        )
+                    }`,
+                    {
+                        cache:"no-store"
+                    }
+                );
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Camera pose unavailable."
+                );
+
+            }
+
+
+            const camera =
+                await response.json();
+
+
+            viewer.camera.position.set(
+
+                camera.position[0],
+
+                camera.position[1],
+
+                camera.position[2]
+
+            );
+
+
+            viewer.camera.lookAt(
+
+                camera.target[0],
+
+                camera.target[1],
+
+                camera.target[2]
+
+            );
+
+
+            if(
+                viewer.camera
+                    .updateProjectionMatrix
+            ){
+
+                viewer.camera
+                    .updateProjectionMatrix();
+
+            }
+
+
+            toast(
+                `3D synchronized with ${image.name}`
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            toast(
+                "COLMAP camera pose is not available for this frame."
+            );
+
+        }
+
+    };
+
+
+/* ======================================================
+   IMAGE MODAL
+====================================================== */
+
+$("addBtn").onclick =
+    () => {
+
+        $("fileInput").value =
+            "";
+
+        $("handlingModal")
+            .classList
+            .add("show");
+
+    };
+
+
+$("cancelHandling").onclick =
+    () => {
+
+        $("handlingModal")
+            .classList
+            .remove("show");
+
+    };
+
+
+$("continueHandling").onclick =
+    () => {
+
+        const handling =
+            document.querySelector(
+                'input[name="handling"]:checked'
+            ).value;
+
+
+        if(
+            handling === "new"
+        ){
+
+            $("handlingModal")
+                .classList
+                .remove("show");
+
+            $("sceneModal")
+                .classList
+                .add("show");
+
+            return;
+
+        }
+
+
+        $("handlingModal")
+            .classList
+            .remove("show");
+
+
+        $("fileInput")
+            .dataset
+            .handling =
+            handling;
+
+
+        $("fileInput").click();
+
+    };
+
+
+async function uploadImages(
+    files,
+    handling
+){
+
+    if(!files?.length)
+        return;
+
+
+    const form =
+        new FormData();
+
+
+    [...files].forEach(file => {
+
+        form.append(
+            "files",
+            file
+        );
+
+    });
+
+
+    try{
+
+        const response =
+            await fetch(
+                `/api/upload-images?handling=${
+                    encodeURIComponent(
+                        handling
+                    )
+                }`,
+                {
+                    method:"POST",
+                    body:form
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.detail ||
+                "Upload failed."
+            );
+
+        }
+
+
+        toast(
+            `${
+                data.added?.length || 0
+            } image(s) added`
+        );
+
+
+        await getState();
+
+    }
+    catch(error){
+
+        console.error(
+            error
+        );
+
+
+        toast(
+            error.message ||
+            "Upload failed."
+        );
+
+    }
+
+}
+
+
+$("fileInput").onchange =
+    event => {
+
+        uploadImages(
+            event.target.files,
+
+            event.target
+                .dataset
+                .handling ||
+                "append"
+
+        );
+
+    };
+
+
+$("evidenceBtn").onclick =
+    () => {
+
+        $("evidenceInput").value =
+            "";
+
+        $("evidenceInput").click();
+
+    };
+
+
+$("evidenceInput").onchange =
+    event => {
+
+        uploadImages(
+            event.target.files,
+            "evidence"
+        );
+
+    };
+
+
+/* ======================================================
+   CREATE INCIDENT
+====================================================== */
+
+$("newSceneBtn").onclick =
+    () => {
+
+        $("sceneNameInput").value =
+            "";
+
+        $("sceneDescInput").value =
+            "";
+
+        $("sceneModal")
+            .classList
+            .add("show");
+
+    };
+
+
+$("cancelScene").onclick =
+    () => {
+
+        $("sceneModal")
+            .classList
+            .remove("show");
+
+    };
+
+
+$("createScene").onclick =
+    async () => {
+
+        const name =
+            $("sceneNameInput")
+                .value
+                .trim();
+
+
+        if(!name){
+
+            toast(
+                "Enter an incident name."
+            );
+
+            return;
+
+        }
+
+
+        const description =
+            $("sceneDescInput")
+                .value
+                .trim();
+
+
+        try{
+
+            const response =
+                await fetch(
+
+                    `/api/scenes?name=${
+                        encodeURIComponent(name)
+                    }&description=${
+                        encodeURIComponent(
+                            description
+                        )
+                    }`,
+
+                    {
+                        method:"POST"
+                    }
+
+                );
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Could not create incident."
+                );
+
+            }
+
+
+            $("sceneModal")
+                .classList
+                .remove("show");
+
+
+            await loadScenes();
+
+            await getState();
+
+
+            toast(
+                "Incident created."
+            );
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            toast(
+                error.message
+            );
+
+        }
+
+    };
+
+
+/* ======================================================
+   SELECT INCIDENT
+====================================================== */
+
+$("sceneSelect").onchange =
+    async () => {
+
+        try{
+
+            const response =
+                await fetch(
+
+                    `/api/scenes/select?scene_id=${
+                        encodeURIComponent(
+                            $("sceneSelect").value
+                        )
+                    }`,
+
+                    {
+                        method:"POST"
+                    }
+
+                );
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Unable to select incident."
+                );
+
+            }
+
+
+            viewerSignature =
+                null;
+
+
+            sceneBounds =
+                null;
+
+
+            await loadScenes();
+
+            await getState();
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            toast(
+                error.message
+            );
+
+        }
+
+    };
+
+
+/* ======================================================
+   REBUILD
+====================================================== */
+
+$("rebuildBtn").onclick =
+    async () => {
+
+        if(!state?.model_stale){
+
+            toast(
+                "No new reconstruction imagery requires rebuilding."
+            );
+
+            return;
+
+        }
+
+
+        const defaultIterations =
+            Number(
+                state?.model_iteration ||
+                7000
+            );
+
+
+        const entered =
+            prompt(
+
+                "3DGS iterations for this rebuild:\n\n"
+                + "1000 = quick test\n"
+                + "3000 = development\n"
+                + "7000 = detailed\n\n"
+                + "Iterations:",
+
+                String(
+                    defaultIterations
+                )
+
+            );
+
+
+        if(
+            entered === null
+        )
+            return;
+
+
+        const iterations =
+            Math.max(
+                100,
+                Math.min(
+                    30000,
+                    parseInt(
+                        entered
+                    ) ||
+                    defaultIterations
+                )
+            );
+
+
+        try{
+
+            const response =
+                await fetch(
+
+                    `/api/run?iterations=${
+                        iterations
+                    }`,
+
+                    {
+                        method:"POST"
+                    }
+
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.detail ||
+                    "Could not start reconstruction."
+                );
+
+            }
+
+
+            toast(
+                `Reconstruction started · ${
+                    iterations
+                } iterations`
+            );
+
+
+            await getState();
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            toast(
+                error.message
+            );
+
+        }
+
+    };
+
+
+/* ======================================================
+   SCREENING
+====================================================== */
+
+$("analyzeBtn").onclick =
+    async () => {
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/analyze",
+                    {
+                        method:"POST"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    data.detail ||
+                    "Screening failed."
+                );
+
+            }
+
+
+            toast(
+                "Screening updated."
+            );
+
+
+            await getState();
+
+        }
+        catch(error){
+
+            console.error(
+                error
+            );
+
+
+            toast(
+                error.message
+            );
+
+        }
+
+    };
+
+
+/* ======================================================
+   PAGINATION
+====================================================== */
+
+$("search").oninput =
+    () => {
+
+        page = 1;
+
+        renderGallery();
+
+    };
+
+
+$("pageSize").onchange =
+    () => {
+
+        page = 1;
+
+        renderGallery();
+
+    };
+
+
+$("pagePrev").onclick =
+    () => {
+
+        page =
+            Math.max(
+                1,
+                page - 1
+            );
+
+        renderGallery();
+
+    };
+
+
+$("pageNext").onclick =
+    () => {
+
+        const images =
+            state?.images ||
+            [];
+
+
+        const query =
+            (
+                $("search").value ||
+                ""
+            ).toLowerCase();
+
+
+        const filtered =
+            images.filter(
+                image =>
+                    image.name
+                        .toLowerCase()
+                        .includes(query)
+            );
+
+
+        const size =
+            parseInt(
+                $("pageSize").value ||
+                "24"
+            );
+
+
+        const pages =
+            Math.max(
+                1,
+                Math.ceil(
+                    filtered.length /
+                    size
+                )
+            );
+
+
+        page =
+            Math.min(
+                pages,
+                page + 1
+            );
+
+
+        renderGallery();
+
+    };
+
+
+/* ======================================================
+   FRAME CONTROLS
+====================================================== */
+
+$("firstBtn").onclick =
+    () =>
+        selectImage(0);
+
+
+$("prevBtn").onclick =
+    () =>
+        selectImage(
+            selected - 1
+        );
+
+
+$("nextBtn").onclick =
+    () =>
+        selectImage(
+            selected + 1
+        );
+
+
+$("lastBtn").onclick =
+    () =>
+        selectImage(
+            (
+                state?.images?.length ||
+                1
+            ) - 1
+        );
+
+
+$("frameInput").onchange =
+    () => {
+
+        selectImage(
+
+            (
+                parseInt(
+                    $("frameInput").value
+                ) ||
+                1
+            ) - 1
+
+        );
+
+    };
+
+
+/* ======================================================
+   KEYBOARD NAVIGATION
+====================================================== */
+
+window.addEventListener(
+    "keydown",
+    event => {
+
+        const tag =
+            event.target?.tagName;
+
+
+        if(
+            [
+                "INPUT",
+                "SELECT",
+                "TEXTAREA"
+            ].includes(tag)
+        )
+            return;
+
+
+        if(
+            event.key ===
+            "ArrowLeft"
+        ){
+
+            event.preventDefault();
+
+            selectImage(
+                selected - 1
+            );
+
+        }
+
+
+        if(
+            event.key ===
+            "ArrowRight"
+        ){
+
+            event.preventDefault();
+
+            selectImage(
+                selected + 1
+            );
+
+        }
+
+
+        if(
+            event.key ===
+            "Home"
+        ){
+
+            event.preventDefault();
+
+            selectImage(0);
+
+        }
+
+
+        if(
+            event.key ===
+            "End"
+        ){
+
+            event.preventDefault();
+
+            selectImage(
+                (
+                    state?.images?.length ||
+                    1
+                ) - 1
+            );
+
+        }
+
+    }
+);
+
+
+/* ======================================================
+   START
+====================================================== */
+
+async function startApplication(){
+
+    console.log(
+        "AeroSplat frontend starting..."
+    );
+
+
+    console.log(
+        "Three.js revision:",
+        THREE.REVISION
+    );
+
+
+    console.log(
+        "GaussianSplats3D:",
+        GaussianSplats3D
+    );
+
+
+    await loadScenes();
+
+    await getState();
+
+
+    setInterval(
+        getState,
+        5000
+    );
+
+}
+
+
+startApplication();
+
+</script>
+
+</body>
+</html>

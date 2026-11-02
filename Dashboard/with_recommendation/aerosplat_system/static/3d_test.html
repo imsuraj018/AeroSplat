@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AeroSplat 3DGS Diagnostic</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#05090d;color:#fff;font-family:Segoe UI,Arial,sans-serif;overflow:hidden}
+#viewer{position:absolute;inset:0}
+#status{position:fixed;left:14px;top:14px;z-index:20;padding:12px 14px;background:rgba(0,0,0,.75);border:1px solid #334;color:#fff;border-radius:8px;max-width:600px;font-size:13px}
+</style>
+</head>
+<body>
+<div id="viewer"></div>
+<div id="status">Starting…</div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/static/vendor/three.module.js",
+    "gaussian-splats-3d": "/static/vendor/gaussian-splats-3d.module.js"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from "three";
+import * as GaussianSplats3D from "gaussian-splats-3d";
+const status=document.getElementById("status");
+const say=(x)=>status.textContent=x;
+async function main(){
+  try{
+    const info=await fetch("/api/model/info",{cache:"no-store"}).then(async r=>{
+      const j=await r.json();
+      if(!r.ok) throw new Error(j.detail||`HTTP ${r.status}`);
+      return j;
+    });
+    console.log("MODEL INFO",info);
+    const b=info.bounds;
+    const c=b.center;
+    const r=Math.max(Number(b.radius||5),0.5);
+    const d=Math.max(r*2.8,4);
+    const viewer=new GaussianSplats3D.Viewer({
+      rootElement:document.getElementById("viewer"),
+      cameraUp:[0,-1,-0.6],
+      initialCameraPosition:[c[0]+d,c[1]-d,c[2]+d*.65],
+      initialCameraLookAt:c,
+      gpuAcceleratedSort:false,
+      sharedMemoryForWorkers:false,
+      integerBasedSort:false,
+      halfPrecisionCovariancesOnGPU:false,
+      sphericalHarmonicsDegree:0,
+      antialiased:false,
+      renderMode:GaussianSplats3D.RenderMode.Always,
+      sceneRevealMode:GaussianSplats3D.SceneRevealMode.Instant,
+      logLevel:GaussianSplats3D.LogLevel.Info
+    });
+    say(`Loading ${info.vertex_count.toLocaleString()} splats · ${(info.size_bytes/1048576).toFixed(1)} MB`);
+    await viewer.addSplatScene("/api/model.ply?v="+Date.now(),{
+      format:GaussianSplats3D.SceneFormat.Ply,
+      showLoadingUI:true,
+      progressiveLoad:false,
+      splatAlphaRemovalThreshold:1
+    });
+    viewer.start();
+    await new Promise(requestAnimationFrame);
+    viewer.camera.position.set(c[0]+d,c[1]-d,c[2]+d*.65);
+    viewer.camera.lookAt(...c);
+    viewer.camera.updateProjectionMatrix();
+    say(`READY · ${info.vertex_count.toLocaleString()} splats · center ${c.map(v=>v.toFixed(2)).join(", ")}`);
+  }catch(e){
+    console.error(e);
+    say("ERROR: "+(e.message||e));
+  }
+}
+main();
+</script>
+</body>
+</html>

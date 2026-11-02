@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AeroSplat | Command Center</title>
+<style>
+:root{--bg:#071018;--panel:#0e1821;--panel2:#111d27;--line:#263846;--text:#edf4f8;--muted:#8ea2b1;--accent:#5db7ef;--good:#44d18a;--warn:#e9bd56;--bad:#ff6e6e;--shadow:0 18px 50px rgba(0,0,0,.28)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 70% -15%,#173044 0,#071018 38%,#050b10 100%);color:var(--text);font:14px/1.45 "Segoe UI",Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.top{height:70px;border-bottom:1px solid var(--line);background:rgba(7,16,24,.96);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:30;backdrop-filter:blur(12px)}.brand{display:flex;align-items:center;gap:12px}.mark{width:38px;height:38px;border:1px solid #3b6d8d;border-radius:10px;display:grid;place-items:center;color:var(--accent);font-weight:900}.brand h1{font-size:16px;margin:0}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}.top-right{display:flex;align-items:center;gap:8px}.pill,.badge{border:1px solid var(--line);padding:5px 9px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.07em}.ready{color:var(--good);background:#0b1e16;border-color:#275b43}.busy{color:var(--warn);background:#211b0d;border-color:#624f22}.stale{color:var(--warn);background:#211b0d;border-color:#624f22}.danger{color:var(--bad);background:#241015;border-color:#71313a}.wrap{max-width:1540px;margin:auto;padding:18px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}.select,.input,.btn,.textarea{background:#0c151d;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:9px 11px}.select{min-width:255px}.btn:hover:not(:disabled){border-color:#4d7188}.btn:disabled{opacity:.45;cursor:not-allowed}.primary{background:#10304a;border-color:#2c698f}.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(390px,.78fr);gap:14px}.card{background:linear-gradient(180deg,#101b24,#0c151d);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}.head{padding:12px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.title{font-weight:800}.sub{font-size:11px;color:var(--muted)}.viewer{height:660px;position:relative;overflow:hidden;background:radial-gradient(circle at center,#1a2a36 0,#0a1218 45%,#03070a 100%)}.viewer-host{position:absolute;inset:0}.viewer-host canvas{display:block;width:100%!important;height:100%!important}.viewer-empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px;z-index:5;pointer-events:none}.viewer-empty strong{color:var(--text)}.viewer-overlay{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.12),transparent 20%,transparent 80%,rgba(0,0,0,.2));z-index:3}.viewer-hud{position:absolute;left:12px;top:12px;padding:9px 11px;border:1px solid rgba(91,128,151,.45);background:rgba(5,11,16,.75);border-radius:9px;z-index:6;pointer-events:none;backdrop-filter:blur(8px)}.viewer-hud strong{display:block;font-size:12px}.viewer-hud span{display:block;margin-top:2px;color:var(--muted);font-size:10px}.viewer-status{position:absolute;right:12px;top:12px;z-index:6}.viewer-controls{position:absolute;left:12px;bottom:12px;display:flex;gap:7px;z-index:6}.viewer-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.range{accent-color:var(--accent)}.side{display:grid;gap:14px}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:13px}.metric{background:#0b141c;border:1px solid var(--line);border-radius:9px;padding:11px}.metric .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.metric .value{font-size:18px;font-weight:800;margin-top:3px}.section{padding:13px}.rows{display:grid;gap:7px}.row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #1c2a34;padding-top:7px}.row span:last-child{font-weight:750}.assessment{display:flex;gap:10px;align-items:center}.dot{width:11px;height:11px;border-radius:50%;background:#60727f}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}.dot.good{background:var(--good)}.recommendation{background:#0b141c;border:1px solid var(--line);border-radius:9px;padding:11px;margin-top:10px}.recommendation strong{display:block;margin-bottom:5px}.rec-list{margin:7px 0 0;padding-left:18px;color:var(--muted);font-size:11px}.notice{padding:9px 10px;border:1px solid #3c3220;background:#19140b;border-radius:8px;color:#d9c790;font-size:10px}.progress{height:5px;background:#14212b;border-radius:999px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}.gallery-card{margin-top:14px}.gallery-top{padding:12px 15px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.gallery-grid{padding:13px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.thumb{background:#091119;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;transition:.15s}.thumb:hover{transform:translateY(-1px);border-color:#47677b}.thumb.selected{border-color:var(--accent);box-shadow:0 0 0 1px rgba(93,183,239,.25) inset}.thumb img{width:100%;aspect-ratio:4/3;display:block;object-fit:cover}.thumb label{display:block;font-size:9px;color:var(--muted);padding:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.inspect{display:grid;grid-template-columns:1.3fr .7fr;gap:12px;padding:13px}.inspect-image{min-height:290px;display:grid;place-items:center;overflow:hidden;background:#050a0f;border:1px solid var(--line);border-radius:10px}.inspect-image img{width:100%;height:100%;max-height:500px;object-fit:contain}.nav{display:flex;align-items:center;gap:6px;margin-top:10px;flex-wrap:wrap}.nav .input{width:80px;text-align:center}.hidden{display:none!important}.modal{position:fixed;inset:0;background:rgba(2,7,11,.72);display:none;place-items:center;z-index:60}.modal.show{display:grid}.modalbox{width:min(560px,calc(100vw - 30px));background:#0e1821;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}.modalbody{padding:15px}.option{border:1px solid var(--line);border-radius:9px;padding:11px;margin-bottom:8px;background:#0b141c}.option small{display:block;color:var(--muted);margin-top:4px}.actions{padding:12px 15px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:7px}.toast{position:fixed;right:18px;bottom:18px;background:#0e1821;border:1px solid var(--line);padding:10px 12px;border-radius:8px;display:none;z-index:100}.toast.show{display:block}.footer-note{padding:10px 15px;color:var(--muted);font-size:10px;border-top:1px solid var(--line)}
+.planner{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(310px,.65fr);gap:12px;padding:13px}.plan-canvas-wrap{position:relative;min-height:390px;border:1px solid var(--line);border-radius:10px;background:#050a0f;overflow:hidden}.plan-canvas-wrap canvas{width:100%;height:390px;display:block;cursor:crosshair}.plan-overlay{position:absolute;left:10px;top:10px;padding:7px 9px;background:rgba(5,11,16,.8);border:1px solid var(--line);border-radius:8px;font-size:10px;color:var(--muted);pointer-events:none}.plan-side{display:grid;gap:9px}.plan-control{background:#0b141c;border:1px solid var(--line);border-radius:9px;padding:10px}.plan-control label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}.plan-control select,.plan-control input[type=range]{width:100%}.plan-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}.plan-metric{background:#091119;border:1px solid var(--line);border-radius:8px;padding:9px}.plan-metric span{display:block;color:var(--muted);font-size:9px;text-transform:uppercase}.plan-metric b{display:block;margin-top:2px;font-size:15px}.plan-list{margin:6px 0 0;padding-left:17px;color:var(--muted);font-size:11px;max-height:150px;overflow:auto}.site-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.site-chip{padding:5px 8px;border:1px solid var(--line);border-radius:999px;font-size:10px;color:var(--muted);background:#0b141c}.hard-note{padding:9px 10px;border:1px solid #65363b;background:#1d1013;color:#efb7bd;border-radius:8px;font-size:10px}.response-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:12px;padding:13px}.response-box{background:#0b141c;border:1px solid var(--line);border-radius:9px;padding:11px}.hazard-tags{display:flex;gap:6px;flex-wrap:wrap}.hazard-tag{border:1px solid var(--line);padding:5px 7px;border-radius:999px;font-size:10px;background:#091119}.hazard-tag.bad{border-color:#71313a;color:#ffb2b2}.hazard-tag.warn{border-color:#624f22;color:#e9d58e}.response-route{font-family:Consolas,monospace;font-size:10px;white-space:pre-wrap;max-height:180px;overflow:auto;color:#b7c8d2}.response-table{width:100%;border-collapse:collapse;font-size:10px}.response-table td{padding:5px;border-top:1px solid #1c2a34;vertical-align:top}.response-table td:first-child{color:var(--muted);width:38%}.response3d-wrap{height:300px;margin-top:8px;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#050a0f}.response3d-wrap canvas{width:100%;height:100%;display:block}.candidate-list{display:grid;gap:7px;max-height:310px;overflow:auto;margin-top:7px}.candidate-card{border:1px solid var(--line);border-radius:8px;padding:9px;background:#091119}.candidate-card.selected{border-color:var(--good);box-shadow:0 0 0 1px rgba(68,209,138,.16) inset}.candidate-card.rejected{opacity:.55;border-color:#4b3035}.candidate-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.candidate-id{font-weight:800}.candidate-meta{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}.candidate-meta span{display:block;color:var(--muted);font-size:9px;text-transform:uppercase}.candidate-meta b{display:block;margin-top:2px;font-size:11px}.laya-box{margin-top:9px;padding:10px;border:1px solid #2c5067;background:#091721;border-radius:9px}.laya-box .key{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.06em}.laya-box .val{font-weight:800;margin-top:2px}.muted-box{padding:9px 10px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:10px;background:#091119}@media(max-width:1100px){.grid{grid-template-columns:1fr}.planner{grid-template-columns:1fr}.gallery-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.viewer{height:560px}}@media(max-width:700px){.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.inspect{grid-template-columns:1fr}.viewer{height:480px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand"><div class="mark">AS</div><div><div class="eyebrow">Post-disaster digital twin & response intelligence</div><h1>AeroSplat Command Center</h1></div></div><div class="top-right"><div class="eyebrow" id="stageText">Ready</div><div class="pill" id="layaStatus">LAYA</div><div class="pill" id="health">SYSTEM</div></div></header>
+<main class="wrap">
+<div class="toolbar"><select id="sceneSelect" class="select"></select><button class="btn" id="newSceneBtn">+ New incident</button><button class="btn" id="addBtn">+ Add drone images</button><button class="btn" id="evidenceBtn">Add evidence</button><button class="btn" id="colmapBtn" disabled>Generate COLMAP</button><button class="btn primary" id="rebuildBtn" disabled>Rebuild digital twin</button><button class="btn" id="analyzeBtn">Run screening</button><div class="site-meta"><span class="site-chip" id="siteType">Type: —</span><span class="site-chip" id="siteLocation">Location: —</span></div></div>
+<div class="grid">
+<section class="card"><div class="head"><div><div class="title">3D Digital Twin</div><div class="sub" id="modelSub">No trained model</div></div><div class="viewer-tools"><label class="sub">Alpha filter</label><input id="alphaRange" class="range" type="range" min="0" max="25" value="1"><span class="sub" id="alphaValue">1</span><button class="btn" id="applyAlpha">Apply</button></div></div><div class="viewer"><div id="viewerHost" class="viewer-host"></div><div id="viewerEmpty" class="viewer-empty"><div><strong>Loading digital twin…</strong><br><span>Preparing Gaussian scene</span></div></div><div class="viewer-overlay"></div><div class="viewer-hud"><strong id="viewerTitle">Gaussian Splat Digital Twin</strong><span id="viewerMeta">Waiting for model</span></div><div class="viewer-status"><span class="badge" id="viewerState">INITIALIZING</span></div><div class="viewer-controls"><button class="btn" id="front3d">Front</button><button class="btn" id="side3d">Side</button><button class="btn" id="top3d">Top</button><button class="btn" id="fit3d">Fit Scene</button><button class="btn" id="reset3d">Reset</button></div></div><div class="footer-note">Drag: orbit · Right-drag: pan · Wheel: zoom. The viewer uses the GraphDeco Gaussian PLY directly; camera framing is based on the reconstructed scene bounds.</div></section>
+<aside class="side">
+<div class="card"><div class="head"><div><div class="title">Operational Assessment</div><div class="sub">Evidence-based screening</div></div><span class="badge" id="triage">PENDING</span></div><div class="section"><div class="assessment"><div class="dot" id="triDot"></div><div><strong id="triageSub">Awaiting screening</strong><div class="sub" id="recLevel">REVIEW</div></div></div><div class="recommendation"><strong>Recommendation</strong><div class="sub" id="recText">Run evidence screening.</div><ul class="rec-list" id="recList"></ul></div></div></div>
+<div class="card"><div class="head"><div><div class="title">Reconstruction Integrity</div><div class="sub">Live COLMAP / GraphDeco state</div></div><span class="badge" id="modelStatus">NONE</span></div><div class="metric-grid"><div class="metric"><div class="label">Images</div><div class="value" id="mImages">0</div></div><div class="metric"><div class="label">Registered</div><div class="value" id="mReg">0</div></div><div class="metric"><div class="label">3D points</div><div class="value" id="mPts">0</div></div><div class="metric"><div class="label">Observations</div><div class="value" id="mObs">0</div></div><div class="metric"><div class="label">Reprojection</div><div class="value" id="mReproj">—</div></div><div class="metric"><div class="label">Camera</div><div class="value" id="mCam">—</div></div></div><div class="section"><div class="sub" id="colmapNote">COLMAP status.</div><div class="sub" id="rebuildNote" style="margin-top:6px">Digital twin status.</div><div class="progress" style="margin-top:8px"><i id="bar"></i></div></div></div>
+<div class="card"><div class="head"><div><div class="title">Structural Screening</div><div class="sub">Visual / geometric indicators</div></div></div><div class="rows section"><div class="row"><span>Frames screened</span><span id="dFrames">0</span></div><div class="row"><span>Mean sharpness</span><span id="dSharp">—</span></div><div class="row"><span>Mean brightness</span><span id="dBright">—</span></div><div class="row"><span>Dark-frame ratio</span><span id="dDark">—</span></div><div class="row"><span>Crack-like frame ratio</span><span id="dCrack">—</span></div><div class="row"><span>Dominant surface inclination</span><span id="dIncline">—</span></div></div><div class="section"><div class="notice">These are screening indicators only. Physical crack dimensions, wall tilt, rubble volume, and structural safety require calibrated, validated analysis.</div></div></div>
+</aside></div>
+<section class="card" style="margin-top:14px"><div class="head"><div><div class="title">Responder Route Planning</div><div class="sub">Lowest-exposure corridor on a selected 2D frame</div></div><span class="badge" id="routeStatus">NOT PLANNED</span></div>
+<div class="planner"><div><div class="plan-canvas-wrap"><canvas id="routeCanvas" width="1200" height="700"></canvas><div class="plan-overlay">Automatic mode draws the recommended corridor here. Manual START / TARGET / HAZARD points remain available as overrides.</div></div><div class="nav" style="margin-top:8px"><select class="select" id="planPointMode" style="min-width:155px"><option value="start">Set START</option><option value="target">Set INSPECTION TARGET</option><option value="hazard">Add HAZARD</option></select><select class="select" id="hazardType" style="min-width:185px"><option value="debris">Debris / rubble</option><option value="unstable_wall">Suspected unstable wall</option><option value="falling_debris">Falling-object zone</option><option value="fire">Fire / heat</option><option value="gas">Gas / vapor concern</option><option value="utility">Exposed utility</option><option value="void">Void / shaft / drop</option><option value="water">Standing water / flow</option><option value="contamination">Contamination concern</option><option value="restricted">No-go / restricted</option></select><label class="sub" style="display:flex;align-items:center;gap:6px"><span>Radius</span><input id="hazardRadius" type="range" min="2" max="25" value="8" class="range"><span id="hazardRadiusValue">8%</span></label></div></div>
+<div class="plan-side"><div class="plan-control"><label>Planning mode</label><select id="planMode" class="select" style="width:100%;min-width:0"><option value="approach">Approach / inspection corridor</option><option value="controlled_entry">Controlled-entry planning</option></select></div><div class="plan-control"><label>Entry authorization gate</label><label style="display:flex;text-transform:none;letter-spacing:0;color:var(--text);font-size:12px;align-items:flex-start;gap:8px"><input id="entryAuthorized" type="checkbox" style="margin-top:2px"><span>Qualified site authority has explicitly authorized controlled entry for this plan.</span></label></div><div class="hard-note">The software will not generate a controlled-entry route without this authorization. A RED preliminary screening state also blocks automated entry-route generation.</div><div class="plan-metrics"><div class="plan-metric"><span>Route</span><b id="routeMetric">—</b></div><div class="plan-metric"><span>Relative distance</span><b id="routeDistance">—</b></div><div class="plan-metric"><span>Exposure cost</span><b id="routeCost">—</b></div><div class="plan-metric"><span>Hard hazards</span><b id="routeHazards">0</b></div></div><div class="recommendation"><strong>Candidate route evaluation</strong><div class="sub" style="margin-top:2px">Generate multiple feasible corridors, reject hard hazards, then let Laya evaluate the remaining evidence.</div><div class="candidate-list" id="candidateList"><div class="muted-box">No candidate routes generated.</div></div><div class="laya-box"><div class="key">Laya decision layer</div><div class="val" id="layaDecision">NOT RUN</div><div class="sub" id="layaDetails" style="margin-top:4px">Start the recommendation flow to evaluate eligible candidates.</div></div></div><div class="recommendation"><strong>Safety instructions</strong><ul class="plan-list" id="routeInstructions"><li>Set a start and target on the selected frame.</li></ul></div><div class="nav"><button class="btn primary" id="recommendRouteBtn">Recommend & show route</button><button class="btn" id="planRouteBtn">Generate single route</button><button class="btn" id="clearRouteBtn">Clear plan</button></div><div class="sub" id="routeReasons">No route has been generated.</div></div></div><div class="footer-note">Route output is a decision-support overlay on the selected image plane. It is not a measured physical distance, structural certification, or permission to enter a damaged structure.</div></section>
+<section class="card" style="margin-top:14px"><div class="head"><div><div class="title">Automatic Hazard & Response Intelligence</div><div class="sub">Automatic visual indicators → 3D spatial evidence → route support</div></div><span class="badge" id="responseStatus">NOT RUN</span></div><div class="response-grid"><div class="response-box"><div class="title">Automatic Hazard Detection</div><div class="sub" style="margin-top:2px">Run on the selected reconstruction frame</div><div class="hazard-tags" id="hazardTags" style="margin-top:10px"><span class="hazard-tag">No automatic analysis yet</span></div><div class="nav"><button class="btn primary" id="autoAnalyzeBtn">Analyze selected frame</button><button class="btn" id="useApproachBtn">Use recommended approach as START</button><button class="btn" id="clearResponseBtn">Clear response analysis</button></div><div class="notice" style="margin-top:9px">Visual detections are indicators only. They can be wrong or incomplete and must be verified on scene. They do not certify structural safety.</div></div><div class="response-box"><div class="title">Recommended Approach</div><div class="sub" id="approachText">Run automatic analysis to generate a visible-frame approach candidate.</div><table class="response-table" style="margin-top:8px"><tr><td>Candidate side</td><td id="approachSide">—</td></tr><tr><td>Hazard-map points</td><td id="hazard3dCount">0</td></tr><tr><td>Spatial graph nodes</td><td id="graphNodes">0</td></tr><tr><td>3D route status</td><td id="route3dStatus">NOT COMPUTED</td></tr></table></div><div class="response-box"><div class="title">3D Hazard Map</div><div class="sub">Automatic detections projected onto COLMAP geometry when supporting points exist.</div><table class="response-table" style="margin-top:8px"><thead><tr><td>Hazard</td><td>Confidence</td><td>3D position</td></tr></thead><tbody id="hazard3dTable"><tr><td colspan="3">No mapped hazards.</td></tr></tbody></table></div><div class="response-box"><div class="title">3D Responder Route</div><div class="sub">Spatially anchored representation of the image-plane route.</div><div class="response3d-wrap"><canvas id="response3dCanvas"></canvas></div><div class="response-route" id="route3dText" style="margin-top:8px">No 3D route generated. Set START and INSPECTION TARGET, then analyze again.</div></div></div><div class="footer-note">AeroSplat's route output is a decision-support aid. It is not a verified walkable path, structural clearance, rescue authorization, or guarantee of safety.</div></section>
+<section class="card gallery-card"><div class="gallery-top"><div><div class="title">Drone Image Inspection</div><div class="sub"><span id="imgCount">0</span> reconstruction images · <span id="evidenceCount">0</span> evidence images</div></div><div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap"><input class="input" id="search" placeholder="Search frame…"><select class="select" id="pageSize" style="min-width:95px"><option>18</option><option selected>24</option><option>48</option><option>96</option></select><button class="btn" id="pagePrev">←</button><button class="btn" id="pageNext">→</button><span class="sub" id="pageInfo"></span></div></div><div class="inspect"><div class="inspect-image"><img id="mainImage" class="hidden" alt="Selected drone frame"><div id="imageEmpty" class="empty">Select a frame</div></div><div><div class="title" id="frameInfo">No frame selected</div><div class="sub" id="imageMeta">—</div><div class="nav"><button class="btn" id="firstBtn">⏮</button><button class="btn" id="prevBtn">←</button><input class="input" id="frameInput" value="1"><button class="btn" id="nextBtn">→</button><button class="btn" id="lastBtn">⏭</button><button class="btn primary" id="locate3d">Locate in 3D</button></div></div></div><div id="galleryGrid" class="gallery-grid"></div></section>
+</main>
+<div class="modal" id="handlingModal"><div class="modalbox"><div class="head"><div><div class="title">Add Imagery</div><div class="sub">Choose how the images are used</div></div></div><div class="modalbody"><div class="option"><label><input type="radio" name="handling" value="append" checked> <b>Append to current scene</b></label><small>Images enter the reconstruction dataset and make the current twin STALE.</small></div><div class="option"><label><input type="radio" name="handling" value="evidence"> <b>Evidence only</b></label><small>Images are stored for inspection and do not trigger COLMAP / 3DGS.</small></div></div><div class="actions"><button class="btn" id="cancelHandling">Cancel</button><button class="btn primary" id="continueHandling">Choose files</button></div></div></div>
+<div class="modal" id="sceneModal"><div class="modalbox"><div class="head"><div><div class="title">New Disaster Site</div><div class="sub">Create an isolated incident workspace</div></div></div><div class="modalbody"><input class="input" id="sceneNameInput" placeholder="Site / incident name" style="width:100%;margin-bottom:8px"><select class="select" id="sceneTypeInput" style="width:100%;min-width:0;margin-bottom:8px"><option>Unknown</option><option>Structural collapse</option><option>Earthquake</option><option>Fire</option><option>Flood</option><option>Landslide</option><option>Cyclone / wind</option><option>Industrial incident</option><option>Explosion</option></select><input class="input" id="sceneLocationInput" placeholder="Location / site reference" style="width:100%;margin-bottom:8px"><textarea class="textarea" id="sceneDescInput" rows="3" placeholder="Site description / field notes" style="width:100%;resize:vertical"></textarea></div><div class="actions"><button class="btn" id="cancelScene">Cancel</button><button class="btn primary" id="createScene">Create site</button></div></div></div>
+<input id="fileInput" type="file" accept="image/*" multiple hidden><input id="evidenceInput" type="file" accept="image/*" multiple hidden><div class="toast" id="toast"></div>
+<script type="importmap">{"imports":{"three":"/static/vendor/three.module.js","gaussian-splats-3d":"/static/vendor/gaussian-splats-3d.module.js"}}</script>
+<script type="module">
+const $=id=>document.getElementById(id);
+let THREE=null, GaussianSplats3D=null, state=null, viewer=null, viewerSignature=null, sceneBounds=null, selected=0, page=1, lastGalleryKey="";
+let routePlan={start:null,target:null,hazards:[],frameName:null};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmt(v){return Number(v||0).toLocaleString();}
+function toast(m){$("toast").textContent=m;$("toast").classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>$("toast").classList.remove("show"),2600);}
+function bytes(v){if(!v)return"—";if(v<1048576)return(v/1024).toFixed(1)+" KB";if(v<1073741824)return(v/1048576).toFixed(1)+" MB";return(v/1073741824).toFixed(2)+" GB";}
+async function loadLibraries(){try{const t=await import("three");THREE=t;const g=await import("gaussian-splats-3d");GaussianSplats3D=g;console.log("Three.js:",THREE.REVISION);console.log("GaussianSplats3D loaded");return true;}catch(e){console.error("Viewer library load failed",e);$("viewerState").textContent="LIBRARY ERROR";$("viewerEmpty").innerHTML=`<div><strong>3D renderer unavailable</strong><br><span>${esc(e.message||e)}</span><br><span>Check the local vendor ES-module files.</span></div>`;return false;}}
+async function getState(){try{const r=await fetch("/api/state",{cache:"no-store"});if(!r.ok)throw new Error(await r.text());state=await r.json();render();}catch(e){console.error(e);$("health").textContent="API OFFLINE";$("health").className="pill danger";}}
+async function loadScenes(){try{const r=await fetch("/api/scenes",{cache:"no-store"});const j=await r.json();$("sceneSelect").innerHTML=(j.scenes||[]).map(s=>`<option value="${esc(s.id)}" ${s.id===j.active_scene_id?"selected":""}>${esc(s.name)}${s.disaster_type?` · ${esc(s.disaster_type)}`:""}</option>`).join("");}catch(e){console.error(e);}}
+async function getBounds(){try{const r=await fetch("/api/model/bounds",{cache:"no-store"});if(!r.ok)throw new Error(await r.text());return await r.json();}catch(e){console.warn("Bounds unavailable",e);return null;}}
+function cameraDistance(){const radius=Math.max(Number(sceneBounds?.radius||5),.5);return Math.max(radius*2.3,2);}
+function setCamera(mode){if(!viewer?.camera)return;const c=sceneBounds?.center||[0,0,0],d=cameraDistance();let pos;if(mode==="front")pos=[c[0],c[1]-d,c[2]];else if(mode==="side")pos=[c[0]+d,c[1],c[2]];else if(mode==="top")pos=[c[0],c[1],c[2]+d];else pos=[c[0]+d*.85,c[1]-d*.95,c[2]+d*.65];viewer.camera.position.set(...pos);viewer.camera.lookAt(...c);viewer.camera.updateProjectionMatrix?.();}
+async function fitLoadedGaussian(){
+  if(!viewer) return false;
+  try{
+    const mesh = typeof viewer.getSplatMesh === "function" ? viewer.getSplatMesh() : viewer.splatMesh;
+    if(!mesh) return false;
+
+    let box = null;
+    if(typeof mesh.computeBoundingBox === "function") {
+      box = mesh.computeBoundingBox(true, 0);
+      if(!box || !box.min || !box.max) {
+        box = mesh.computeBoundingBox(false, 0);
+      }
+    }
+
+    if(!box || !box.min || !box.max) return false;
+
+    const min = box.min;
+    const max = box.max;
+    const cx = (min.x + max.x) * 0.5;
+    const cy = (min.y + max.y) * 0.5;
+    const cz = (min.z + max.z) * 0.5;
+
+    const sx = Math.abs(max.x - min.x);
+    const sy = Math.abs(max.y - min.y);
+    const sz = Math.abs(max.z - min.z);
+    const radius = Math.max(Math.sqrt(sx*sx + sy*sy + sz*sz) * 0.5, 1);
+
+    sceneBounds = {center:[cx,cy,cz], radius};
+
+    // Use the same natural-up convention as the library examples.
+    const pos = [
+      cx,
+      cy - radius * 1.6,
+      cz + radius * 0.8
+    ];
+
+    if(viewer.camera){
+      viewer.camera.position.set(pos[0], pos[1], pos[2]);
+      viewer.camera.lookAt(cx, cy, cz);
+      viewer.camera.updateProjectionMatrix?.();
+    }
+
+    console.log("Loaded Gaussian bounds:", {
+      center:[cx,cy,cz],
+      size:[sx,sy,sz],
+      radius,
+      splatMesh:mesh
+    });
+
+    return true;
+  }catch(error){
+    console.warn("Loaded-scene fit failed; using server bounds", error);
+    return false;
+  }
+}
+
+async function loadGaussian(){
+  if(!state?.model_ready || !state?.model_url){
+    await disposeViewer();
+    $("viewerState").textContent="NO MODEL";
+    $("viewerEmpty").style.display="grid";
+    $("viewerEmpty").innerHTML="<div><strong>No trained digital twin</strong><br><span>Build or select a scene with a trained Gaussian model.</span></div>";
+    return;
+  }
+
+  if(!GaussianSplats3D) return;
+
+  try{
+    $("viewerState").textContent="LOADING";
+    $("viewerEmpty").style.display="grid";
+    $("viewerEmpty").innerHTML="<div><strong>Loading Gaussian digital twin…</strong><br><span>Reading the GraphDeco PLY.</span></div>";
+
+    await disposeViewer();
+    $("viewerHost").replaceChildren();
+
+    // Create the viewer with a valid conservative starting camera.
+    const G = GaussianSplats3D;
+    const serverBounds = await getBounds();
+    const c = serverBounds?.center || [0,0,0];
+    const r = Math.max(Number(serverBounds?.radius || 4), 1);
+
+    viewer = new G.Viewer({
+      rootElement:$("viewerHost"),
+      cameraUp:[0,-1,-0.6],
+      initialCameraPosition:[c[0], c[1]-r*1.8, c[2]+r*0.9],
+      initialCameraLookAt:c,
+      gpuAcceleratedSort:false,
+      sharedMemoryForWorkers:false,
+      integerBasedSort:false,
+      halfPrecisionCovariancesOnGPU:false,
+      sphericalHarmonicsDegree:2,
+      antialiased:false,
+      focalAdjustment:1.0,
+      renderMode:G.RenderMode?.Always ?? G.RenderMode?.OnChange,
+      sceneRevealMode:G.SceneRevealMode?.Instant ?? 0
+    });
+
+    const opts = {
+      format:G.SceneFormat?.Ply,
+      showLoadingUI:false,
+      progressiveLoad:false,
+      splatAlphaRemovalThreshold:Math.max(0, Number($("alphaRange").value || 1))
+    };
+
+    const url = state.model_url + "?v=" + encodeURIComponent(state.updated_at || Date.now());
+    console.log("Loading Gaussian PLY:", url);
+
+    await viewer.addSplatScene(url, opts);
+
+    // The scene is now loaded. Start the render loop.
+    viewer.start();
+
+    // Prefer the loaded SplatMesh's own bounding box. The library exposes
+    // SplatMesh.computeBoundingBox() for this purpose.
+    const fitted = await fitLoadedGaussian();
+
+    $("viewerEmpty").style.display="none";
+    $("viewerState").textContent="READY";
+    $("viewerMeta").textContent =
+      `Iteration ${fmt(state.model_iteration)} · ${fmt(state.points3d)} COLMAP points` +
+      (fitted ? " · Scene fitted from loaded splats" : "");
+
+  }catch(e){
+    console.error("Gaussian viewer error",e);
+    await disposeViewer();
+    $("viewerState").textContent="ERROR";
+    $("viewerEmpty").style.display="grid";
+    $("viewerEmpty").innerHTML=`<div><strong>Gaussian twin failed to load</strong><br><span>${esc(e.message||e)}</span><br><button class="btn" id="retryViewer">Retry</button></div>`;
+    $("retryViewer")?.addEventListener("click",()=>{viewerSignature=null;loadGaussian();},{once:true});
+  }
+}
+
+async function disposeViewer(){
+  const oldViewer = viewer;
+  viewer = null;
+  if(oldViewer){
+    try{ await oldViewer.dispose(); }
+    catch(e){ console.warn("Viewer dispose warning",e); }
+  }
+  const root=$("viewerHost");
+  if(root) root.replaceChildren();
+}
+function currentFrameName(){return state?.images?.[selected]?.name||null;}
+function resetRoutePlan(){routePlan={start:null,target:null,hazards:[],frameName:currentFrameName()};drawRouteCanvas();updateRoutePanel({status:"NOT_COMPUTED",instructions:["Set a start and target on the selected frame."],reasons:[]});}
+function getImagePlacement(canvas,img){
+ const w=canvas.width,h=canvas.height;
+ if(!(img?.complete&&img.naturalWidth)) return null;
+ const scale=Math.min(w/img.naturalWidth,h/img.naturalHeight);
+ const dw=img.naturalWidth*scale,dh=img.naturalHeight*scale;
+ return {scale,dw,dh,left:(w-dw)/2,top:(h-dh)/2};
+}
+function imagePointToCanvas(p,placement){
+ if(!p||!placement)return null;
+ return [placement.left+p[0]*placement.dw,placement.top+p[1]*placement.dh];
+}
+function canvasPoint(ev){
+ const canvas=$("routeCanvas"),rect=canvas.getBoundingClientRect(),w=canvas.width,h=canvas.height,img=$("mainImage");
+ const placement=getImagePlacement(canvas,img);
+ if(!placement)return null;
+ const cx=((ev.clientX-rect.left)/rect.width)*w,cy=((ev.clientY-rect.top)/rect.height)*h;
+ if(cx<placement.left||cx>placement.left+placement.dw||cy<placement.top||cy>placement.top+placement.dh)return null;
+ return [
+   Math.max(0,Math.min(1,(cx-placement.left)/placement.dw)),
+   Math.max(0,Math.min(1,(cy-placement.top)/placement.dh))
+ ];
+}
+function drawMarker(ctx,p,label,fill,radius=8,placement=null){
+ if(!p)return;
+ const xy=imagePointToCanvas(p,placement);
+ if(!xy)return;
+ const [x,y]=xy;
+ ctx.beginPath();
+ ctx.fillStyle=fill;
+ ctx.arc(x,y,radius,0,Math.PI*2);
+ ctx.fill();
+ ctx.lineWidth=2;
+ ctx.strokeStyle="#fff";
+ ctx.stroke();
+ ctx.font="800 12px Segoe UI,Arial";
+ ctx.fillStyle="#fff";
+ ctx.shadowColor="rgba(0,0,0,.75)";
+ ctx.shadowBlur=4;
+ ctx.fillText(label,x+12,y-9);
+ ctx.shadowBlur=0;
+}
+function drawArrow(ctx,a,b,placement,color,width){
+ const p1=imagePointToCanvas(a,placement),p2=imagePointToCanvas(b,placement);
+ if(!p1||!p2)return;
+ const dx=p2[0]-p1[0],dy=p2[1]-p1[1],len=Math.hypot(dx,dy);
+ if(len<12)return;
+ const ux=dx/len,uy=dy/len,px=-uy,py=ux;
+ const size=Math.max(8,width*2.2);
+ const bx=p2[0]-ux*size,by=p2[1]-uy*size;
+ ctx.beginPath();
+ ctx.moveTo(p2[0],p2[1]);
+ ctx.lineTo(bx+px*size*.55,by+py*size*.55);
+ ctx.lineTo(bx-px*size*.55,by-py*size*.55);
+ ctx.closePath();
+ ctx.fillStyle=color;
+ ctx.fill();
+}
+function drawPath(ctx,path,placement,color,width,selected=false){
+ if(!Array.isArray(path)||path.length<2||!placement)return;
+ ctx.beginPath();
+ path.forEach((pt,i)=>{const xy=imagePointToCanvas(pt,placement);if(!xy)return;i?ctx.lineTo(xy[0],xy[1]):ctx.moveTo(xy[0],xy[1]);});
+ ctx.strokeStyle=color;
+ ctx.lineWidth=width;
+ ctx.lineCap="round";
+ ctx.lineJoin="round";
+ if(selected){ctx.shadowColor="rgba(68,209,138,.42)";ctx.shadowBlur=12;}
+ ctx.stroke();
+ ctx.shadowBlur=0;
+ const step=Math.max(1,Math.floor((path.length-1)/5));
+ for(let i=step;i<path.length;i+=step){drawArrow(ctx,path[i-1],path[i],placement,color,width);}
+}
+function drawRouteCanvas(){
+ const canvas=$("routeCanvas"),ctx=canvas?.getContext("2d");if(!ctx)return;
+ const w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);
+ const img=$("mainImage");
+ const placement=getImagePlacement(canvas,img);
+ if(placement){
+   ctx.fillStyle="#050a0f";ctx.fillRect(0,0,w,h);
+   ctx.drawImage(img,placement.left,placement.top,placement.dw,placement.dh);
+ }else{
+   ctx.fillStyle="#081017";ctx.fillRect(0,0,w,h);
+   ctx.fillStyle="#60727f";ctx.font="14px Segoe UI,Arial";ctx.fillText("Select a drone frame to plan on it.",24,36);
+ }
+ if(!placement)return;
+ (routePlan.hazards||[]).forEach(hz=>{
+   const xy=imagePointToCanvas(hz.point,placement);if(!xy)return;
+   const x=xy[0],y=xy[1];
+   const radius=Math.max(8,Number(hz.radius||.06)*Math.min(placement.dw,placement.dh));
+   ctx.beginPath();ctx.fillStyle=hz.hard?"rgba(255,110,110,.17)":"rgba(233,189,86,.15)";ctx.strokeStyle=hz.hard?"rgba(255,110,110,.7)":"rgba(233,189,86,.65)";ctx.lineWidth=2;ctx.arc(x,y,radius,0,Math.PI*2);ctx.fill();ctx.stroke();
+   ctx.fillStyle="#fff";ctx.font="800 10px Segoe UI,Arial";ctx.fillText("HZ",x+7,y-7);
+ });
+ const candidates=state?.route?.candidates||[];
+ if(state?.route?.plan_frame===currentFrameName()&&candidates.length){
+   candidates.forEach(c=>{
+     const path=c.path||[];
+     if(path.length<2)return;
+     const selectedRoute=String(c.route_id)===String(state?.route?.selected_route_id);
+     drawPath(ctx,path,placement,selectedRoute?"#44d18a":"rgba(142,162,177,.6)",selectedRoute?7:3,selectedRoute);
+   });
+ }else{
+   const path=state?.route?.path||[];
+   if(state?.route?.plan_frame===currentFrameName()&&path.length>1){drawPath(ctx,path,placement,"#5db7ef",6,true);}
+ }
+ const autoFrame=state?.response?.frame;
+ const autoHazards=(state?.response?.hazards||[]);
+ if(autoFrame===currentFrameName()){
+   autoHazards.forEach(hz=>{
+     const b=hz.bbox||[hz.point?.[0]||.5,hz.point?.[1]||.5,(hz.point?.[0]||.5)+.01,(hz.point?.[1]||.5)+.01];
+     const a=imagePointToCanvas([b[0],b[1]],placement),z=imagePointToCanvas([b[2],b[3]],placement);if(!a||!z)return;
+     const x=a[0],y=a[1],bw=z[0]-a[0],bh=z[1]-a[1];
+     ctx.strokeStyle=hz.hard?"rgba(255,110,110,.95)":"rgba(233,189,86,.95)";ctx.lineWidth=2;ctx.strokeRect(x,y,Math.max(6,bw),Math.max(6,bh));
+     ctx.fillStyle=hz.hard?"rgba(255,110,110,.18)":"rgba(233,189,86,.12)";ctx.fillRect(x,y,Math.max(6,bw),Math.max(6,bh));
+     ctx.fillStyle="#fff";ctx.font="800 10px Segoe UI,Arial";ctx.shadowColor="rgba(0,0,0,.75)";ctx.shadowBlur=3;ctx.fillText(`${hz.kind} ${(Number(hz.confidence||0)*100).toFixed(0)}%`,x+4,Math.max(12,y+12));ctx.shadowBlur=0;
+   });
+ }
+ drawMarker(ctx,routePlan.start,"START","#44d18a",9,placement);
+ drawMarker(ctx,routePlan.target,"INSPECTION","#5db7ef",9,placement);
+ const selectedRoute=state?.route?.selected_route_id;
+ if(selectedRoute&&state?.route?.plan_frame===currentFrameName()){
+   ctx.fillStyle="rgba(5,11,16,.82)";ctx.strokeStyle="rgba(68,209,138,.55)";ctx.lineWidth=1;
+   const label=`RECOMMENDED ${selectedRoute}`;
+   const tw=ctx.measureText(label).width+24;
+   ctx.beginPath();ctx.roundRect(14,14,Math.max(150,tw),30,8);ctx.fill();ctx.stroke();
+   ctx.fillStyle="#44d18a";ctx.font="800 12px Segoe UI,Arial";ctx.fillText(label,26,34);
+   ctx.fillStyle="#d7e2e8";ctx.font="10px Segoe UI,Arial";ctx.fillText("Arrows show travel direction",26,50);
+ }
+}
+function updateRoutePanel(route){
+ const r=route||{};
+ const status=String(r.status||"NOT_COMPUTED");
+ $("routeStatus").textContent=status.replaceAll("_"," ");
+ $("routeMetric").textContent=status==="ROUTE_RECOMMENDED"?"Laya / candidates":status==="APPROACH_ROUTE"?"APPROACH":status==="CONTROLLED_ENTRY_ROUTE"?"CONTROLLED ENTRY":status.replaceAll("_"," ");
+ $("routeDistance").textContent=r.relative_distance!=null?Number(r.relative_distance).toFixed(1)+" grid units":"—";
+ $("routeCost").textContent=r.exposure_cost!=null?Number(r.exposure_cost).toFixed(1):"—";
+ $("routeHazards").textContent=Number(r.blocked_zones||0);
+ $("routeInstructions").innerHTML=(r.instructions||["Set a start and target on the selected frame."]).map(x=>`<li>${esc(x)}</li>`).join("");
+ $("routeReasons").textContent=(r.reasons||[]).join(" · ")||"No route has been generated.";
+ const selected=String(r.selected_route_id||"");
+ const candidates=r.candidates||[];
+ $("candidateList").innerHTML=candidates.length ? candidates.map(c=>{
+   const isSelected=String(c.route_id)===selected;
+   const cls=isSelected?"candidate-card selected":c.blocked?"candidate-card rejected":"candidate-card";
+   return `<div class="${cls}">
+      <div class="candidate-top"><span class="candidate-id">${esc(c.route_id)}</span><span class="badge">${esc(c.eligibility||"ELIGIBLE")}${isSelected?" · SELECTED":""}</span></div>
+      <div class="candidate-meta">
+        <div><span>Distance</span><b>${Number(c.distance||0).toFixed(1)}</b></div>
+        <div><span>Exposure</span><b>${Number(c.hazard_exposure||0).toFixed(3)}</b></div>
+        <div><span>Clearance</span><b>${Number(c.clearance||0).toFixed(3)}</b></div>
+        <div><span>Cost</span><b>${Number(c.exposure_cost||0).toFixed(1)}</b></div>
+      </div>
+   </div>`;
+ }).join("") : '<div class="muted-box">No candidate routes generated.</div>';
+ const l=r.laya||{};
+ if(l.status==="LAYA_EVALUATED"){
+   const authoritative=String(r.selected_route_id||"—");
+   $("layaDecision").textContent=`AeroSplat ${authoritative} · Laya advisory ${l.selected_route||"—"}`;
+   const conf=l.selected_route_confidence!=null?`Route confidence: ${(Number(l.selected_route_confidence)*100).toFixed(1)}%`:`Route confidence: —`;
+   const rp=l.review_priority!=null?`Review priority score: ${Number(l.review_priority).toFixed(2)}`:"Review priority: —";
+   const reassess=l.reassessment_probability!=null?`Reassessment probability: ${(Number(l.reassessment_probability)*100).toFixed(1)}%`:"Reassessment: —";
+   $("layaDetails").textContent=`${conf} · ${rp} · ${reassess} · model: ${l.routing?.model||"typed-decisions"}`;
+ }else if(l.status==="LAYA_UNAVAILABLE"){
+   $("layaDecision").textContent="Fallback deterministic selection";
+   $("layaDetails").textContent=`Laya unavailable: ${l.error||"start the Laya server on port 8100"}`;
+ }else{
+   $("layaDecision").textContent="NOT RUN";
+   $("layaDetails").textContent="Generate candidate routes to evaluate them with Laya.";
+ }
+ drawRouteCanvas();
+}
+
+async function recommendRoute(){
+ const frame=currentFrameName();
+ if(!frame)return toast("Select a drone frame first.");
+ if(routePlan.frameName!==frame){routePlan={start:null,target:null,hazards:[],frameName:frame};}
+ const payload={
+   mode:$('planMode').value,
+   entry_authorized:$('entryAuthorized').checked,
+   auto_mode:true,
+   start:null,
+   target:null,
+   hazards:Array.isArray(routePlan.hazards)?routePlan.hazards:[],
+   frame_name:frame,
+   k:5,
+   grid_width:110,
+   grid_height:78
+ };
+ try{
+  const r=await fetch('/api/route/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.detail||'Route recommendation failed');
+  state.route=j.route;
+  routePlan.start=j.route.start||null;
+  routePlan.target=j.route.target||null;
+  routePlan.hazards=j.route.hazards||routePlan.hazards||[];
+  routePlan.frameName=frame;
+  updateRoutePanel(j.route);
+  drawRouteCanvas();
+  if(typeof renderResponse3D==='function') renderResponse3D(state.response||{});
+  const status=j.route.status||'UNKNOWN';
+  if(status==='ROUTE_RECOMMENDED'){
+    toast(`Recommended ${j.route.selected_route_id||'route'}`);
+  }else{
+    toast(status.replaceAll('_',' '));
+  }
+ }catch(e){
+  console.error(e);
+  toast(e.message||'Route recommendation failed');
+ }
+}
+
+async function generateRoute(){const frame=currentFrameName();if(!frame)return toast("Select a drone frame first.");if(!routePlan.start||!routePlan.target)return toast("Set both START and INSPECTION TARGET.");if(routePlan.frameName!==frame)return toast("Route points belong to the selected frame. Re-mark them on this frame.");const payload={mode:$("planMode").value,entry_authorized:$("entryAuthorized").checked,start:routePlan.start,target:routePlan.target,hazards:routePlan.hazards,frame_name:frame};try{const r=await fetch("/api/route/plan",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const j=await r.json();if(!r.ok)throw new Error(j.detail||"Route planning failed");state.route=j.route;updateRoutePanel(j.route);toast(j.route.status.replaceAll("_"," "));}catch(e){toast(e.message||"Route planning failed");}}
+async function clearRoute(){try{await fetch("/api/route",{method:"DELETE"});routePlan={start:null,target:null,hazards:[],frameName:currentFrameName()};if(state)state.route={status:"NOT_COMPUTED",auto_mode:true,instructions:["Run automatic route recommendation on the selected frame."],reasons:[]};updateRoutePanel(state?.route);}catch(e){toast(e.message||"Unable to clear route");}}
+function handleRouteCanvasClick(ev){const frame=currentFrameName();if(!frame)return toast("Select a drone frame first.");if(routePlan.frameName!==frame)routePlan={start:null,target:null,hazards:[],frameName:frame};const p=canvasPoint(ev);if(!p)return toast("Click inside the visible image area.");const mode=$("planPointMode").value;if(mode==="start")routePlan.start=p;else if(mode==="target")routePlan.target=p;else{const type=$("hazardType").value;const hard=["unstable_wall","falling_debris","fire","gas","utility","void","restricted"].includes(type);const labels={debris:"Debris / rubble",unstable_wall:"Suspected unstable wall",falling_debris:"Falling-object zone",fire:"Fire / heat",gas:"Gas / vapor concern",utility:"Exposed utility concern",void:"Void / shaft / drop",water:"Standing water / flow",contamination:"Contamination concern",restricted:"No-go / restricted"};const weights={debris:3,unstable_wall:9,falling_debris:8,fire:10,gas:10,utility:9,void:10,water:4,contamination:7,restricted:10};routePlan.hazards.push({point:p,kind:type,label:labels[type]||type,weight:weights[type]||3,hard,radius:Number($("hazardRadius").value)/100});}
+drawRouteCanvas();}
+
+let response3dRenderer=null,response3dScene=null,response3dCamera=null,response3dGroup=null,response3dReady=false;
+function renderResponse3D(r){
+ const canvas=$("response3dCanvas");
+ if(!canvas||!THREE)return;
+ try{
+  if(!response3dRenderer){
+   response3dRenderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+   response3dRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+   response3dScene=new THREE.Scene();
+   response3dScene.background=new THREE.Color(0x050a0f);
+   response3dCamera=new THREE.PerspectiveCamera(45,1,0.01,10000);
+   const a=new THREE.AmbientLight(0xffffff,1.8);response3dScene.add(a);
+   const d=new THREE.DirectionalLight(0xffffff,2.2);d.position.set(4,6,8);response3dScene.add(d);
+   response3dReady=true;
+   const resize=()=>{const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);response3dRenderer.setSize(w,h,false);response3dCamera.aspect=w/h;response3dCamera.updateProjectionMatrix();};
+   window.addEventListener("resize",resize);resize();
+   requestAnimationFrame(function spin(){if(response3dGroup){response3dGroup.rotation.y+=0.0015;}if(response3dRenderer&&response3dScene&&response3dCamera)response3dRenderer.render(response3dScene,response3dCamera);requestAnimationFrame(spin);});
+  }
+  if(response3dGroup)response3dScene.remove(response3dGroup);
+  response3dGroup=new THREE.Group();response3dScene.add(response3dGroup);
+  const pts=[];
+  (r.hazard_map_3d||[]).forEach(h=>{if(Array.isArray(h.position_3d))pts.push(h.position_3d);});
+  (r.route_3d||[]).forEach(p=>pts.push(p));
+  if(Array.isArray(r.approach_3d)&&r.approach_3d.length===3)pts.push(r.approach_3d);
+  if(!pts.length){response3dCamera.position.set(0,0,5);response3dCamera.lookAt(0,0,0);return;}
+  const arr=pts.map(p=>new THREE.Vector3(Number(p[0]),Number(p[1]),Number(p[2])));
+  const box=new THREE.Box3().setFromPoints(arr),center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3());
+  const maxDim=Math.max(size.x,size.y,size.z,0.1),scale=4/maxDim;
+  response3dGroup.position.copy(center).multiplyScalar(-scale);
+  const route=r.route_3d||[];
+  if(route.length>1){const geo=new THREE.BufferGeometry().setFromPoints(route.map(p=>new THREE.Vector3(Number(p[0])*scale,Number(p[1])*scale,Number(p[2])*scale)));const mat=new THREE.LineBasicMaterial({color:0x5db7ef,linewidth:3});response3dGroup.add(new THREE.Line(geo,mat));}
+  (r.hazard_map_3d||[]).filter(h=>Array.isArray(h.position_3d)).slice(0,150).forEach(h=>{const risk=Number(h.risk_score||0);const color=risk>=70?0xff6e6e:risk>=35?0xe9bd56:0x44d18a;const radius=Math.max(0.035,Math.min(0.16,0.05+Number(h.spatial_radius||0.05)*scale*0.12));const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius,14,10),new THREE.MeshStandardMaterial({color,roughness:.6,metalness:.05}));mesh.position.set(Number(h.position_3d[0])*scale,Number(h.position_3d[1])*scale,Number(h.position_3d[2])*scale);response3dGroup.add(mesh);});
+  if(Array.isArray(r.approach_3d)&&r.approach_3d.length===3){const m=new THREE.Mesh(new THREE.SphereGeometry(.11,16,12),new THREE.MeshStandardMaterial({color:0x44d18a}));m.position.set(Number(r.approach_3d[0])*scale,Number(r.approach_3d[1])*scale,Number(r.approach_3d[2])*scale);response3dGroup.add(m);}
+  const grid=new THREE.GridHelper(6,12,0x263846,0x14212b);grid.rotation.x=0;response3dGroup.add(grid);
+  response3dCamera.position.set(0,Math.max(2.5,1.3*3.5),Math.max(4.5,1.8*3.5));response3dCamera.lookAt(0,0,0);
+ }catch(e){console.warn("3D response map render warning",e);}
+}
+
+function renderResponse(response){
+ const r=response||{};
+ const status=String(r.status||"NOT_RUN");
+ $("responseStatus").textContent=status.replaceAll("_"," ");
+ const hazards=r.hazards||[];
+ if(hazards.length){
+  const counts=r.hazard_counts||{};
+  const parts=Object.entries(counts).map(([k,v])=>{
+   const found=hazards.find(h=>h.kind===k);
+   const bad=["fire_like","collapse_indicator","smoke"].includes(k)||found?.hard;
+   return `<span class="hazard-tag ${bad?"bad":"warn"}">${esc(k.replaceAll("_"," "))} × ${v}</span>`;
+  });
+  $("hazardTags").innerHTML=parts.join("");
+ }else{
+  $("hazardTags").innerHTML='<span class="hazard-tag">No visual hazard indicators detected on this frame.</span>';
+ }
+ const a=r.recommended_approach;
+ if(a){
+  $("approachSide").textContent=String(a.side||"—").toUpperCase();
+  $("approachText").textContent=`Approach candidate: (${Number(a.point?.[0]||0).toFixed(3)}, ${Number(a.point?.[1]||0).toFixed(3)}) · ${a.reason||""}`;
+ }else{
+  $("approachSide").textContent="—";
+  $("approachText").textContent="Run automatic analysis to generate a visible-frame approach candidate.";
+ }
+ $("hazard3dCount").textContent=fmt((r.hazard_map_3d||[]).filter(h=>Array.isArray(h.position_3d)).length);
+ $("graphNodes").textContent=fmt(r.graph?.nodes||0);
+ $("route3dStatus").textContent=String(r.route_3d_status||"NOT COMPUTED").replaceAll("_"," ").toUpperCase();
+ const rows=(r.hazard_map_3d||[]).filter(h=>Array.isArray(h.position_3d)).slice(0,30).map(h=>`<tr><td>${esc(h.label||h.kind)}</td><td>${(Number(h.confidence||0)*100).toFixed(1)}%</td><td>[${h.position_3d.map(v=>Number(v).toFixed(3)).join(", ")}]</td></tr>`).join("");
+ $("hazard3dTable").innerHTML=rows||'<tr><td colspan="3">No supporting 3D points were available for the detected regions.</td></tr>';
+ const path=r.route_3d||[];
+ $("route3dText").textContent=path.length?path.map((pt,i)=>`${String(i+1).padStart(2,"0")}. (${pt.map(v=>Number(v).toFixed(4)).join(", ")})`).join("\n"):"No 3D route generated. Set START and INSPECTION TARGET, then analyze again.";
+ renderResponse3D(r);
+}
+
+async function analyzeResponse(){
+ const frame=currentFrameName();
+ if(!frame)return toast("Select a reconstruction frame first.");
+ const payload={frame_name:frame,start:null,target:null,mode:$("planMode").value,entry_authorized:$("entryAuthorized").checked,auto_mode:true};
+ try{
+  const r=await fetch("/api/response/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.detail||"Response analysis failed");
+  state.response=j.response;
+  renderResponse(j.response);
+  const autoRouteHazards=(j.response.hazards||[]).slice(0,60).map(h=>{
+    const b=h.bbox;
+    const px=Array.isArray(h.point)?h.point:[b?((Number(b[0])+Number(b[2]))/2):0.5,b?((Number(b[1])+Number(b[3]))/2):0.5];
+    const defaults={
+      fire_like:{weight:10,hard:true,radius:0.12},
+      smoke:{weight:8,hard:true,radius:0.10},
+      collapse_indicator:{weight:10,hard:true,radius:0.12},
+      debris_like:{weight:5,hard:false,radius:0.08},
+      crack_like:{weight:6,hard:false,radius:0.06},
+      water_like:{weight:4,hard:false,radius:0.08},
+      obscured_area:{weight:3,hard:false,radius:0.16}
+    };
+    const d=defaults[h.kind]||{weight:3,hard:false,radius:0.06};
+    return {point:[Math.max(0,Math.min(1,Number(px[0])||0.5)),Math.max(0,Math.min(1,Number(px[1])||0.5))],kind:h.kind||'debris',label:h.label||h.kind,weight:Number(h.weight??d.weight),hard:Boolean(h.hard??d.hard),radius:Number(h.radius??d.radius),confidence:Number(h.confidence||0.5),source:'automatic'};
+  });
+  if(autoRouteHazards.length){
+    const existing=Array.isArray(routePlan.hazards)?routePlan.hazards:[];
+    const merged=[...existing];
+    autoRouteHazards.forEach(h=>{
+      const exists=merged.some(e=>e.kind===h.kind&&Math.hypot(Number(e.point?.[0]||0)-h.point[0],Number(e.point?.[1]||0)-h.point[1])<0.025);
+      if(!exists)merged.push(h);
+    });
+    routePlan.hazards=merged.slice(0,80);
+    routePlan.frameName=frame;
+  }
+  if(j.response.route_2d?.hazards){routePlan.hazards=j.response.route_2d.hazards;routePlan.frameName=frame;}
+  updateRoutePanel(j.response.route_2d||state.route);
+  drawRouteCanvas();
+
+  // Automatic mode: immediately generate candidate corridors and render the
+  // recommended path after the hazard analysis completes. Manual START/TARGET
+  // remain optional overrides.
+  await recommendRoute();
+  drawRouteCanvas();
+
+  toast("Hazards analyzed and route recommendation generated.");
+ }catch(e){
+  console.error(e);
+  toast(e.message||"Response analysis failed");
+ }
+}
+
+function render(){
+ if(!state)return;
+ const s=state.model_status||"NONE";
+ $("health").textContent=state.busy?"PROCESSING":state.model_stale?"MODEL STALE":state.model_ready?"SYSTEM READY":"NO MODEL";$("health").className="pill "+(state.busy?"busy":state.model_stale?"stale":state.model_ready?"ready":"");
+ $("stageText").textContent=state.status||"Ready";$("bar").style.width=(state.progress||0)+"%";$("modelStatus").textContent=s;
+ $("mImages").textContent=fmt(state.images_count);$("mReg").textContent=fmt(state.registered_images);$("mPts").textContent=fmt(state.points3d);$("mObs").textContent=fmt(state.observations);$("mReproj").textContent=state.mean_reprojection_error_px?Number(state.mean_reprojection_error_px).toFixed(2)+" px":"—";$("mCam").textContent=state.camera_model||"—";
+ $("modelSub").textContent=state.model_ready?`GraphDeco 3DGS · iteration ${fmt(state.model_iteration)} · ${bytes(state.model_size_bytes)}`:"No trained model";
+ $("colmapBtn").disabled=!!state.busy||Number(state.reconstruction_images_count||0)<3;
+ $("rebuildBtn").disabled=!!state.busy||!state.model_stale||Number(state.reconstruction_images_count||0)<3;
+ $("colmapNote").textContent=state.busy&&String(state.stage||"").startsWith("colmap")?state.status:(state.colmap_stale?"COLMAP is stale because new reconstruction images were added.":state.colmap_status==="CURRENT"?`COLMAP current · ${fmt(state.registered_images)} registered · ${fmt(state.points3d)} points`:Number(state.reconstruction_images_count||0)>=3?"COLMAP has not been generated for the current image set.":"Add at least 3 overlapping images.");
+ $("rebuildNote").textContent=state.busy?"Current twin remains visible while the new reconstruction runs.":state.model_stale?`${fmt(state.new_images_count||0)} new/changed image(s). Rebuild to update the twin.`:state.model_ready?"Digital twin synchronized with current reconstruction imagery.":"Generate COLMAP first, then rebuild the digital twin.";
+ $("siteType").textContent=`Type: ${state.site_profile?.disaster_type||"—"}`;$("siteLocation").textContent=`Location: ${state.site_profile?.location||"—"}`;if(!routePlan.frameName&&state.route?.plan_frame){routePlan={start:state.route.start||null,target:state.route.target||null,hazards:state.route.hazards||[],frameName:state.route.plan_frame};}updateRoutePanel(state.route);renderResponse(state.response);const d=state.analysis||{},q=d.quality||{},c=d.crack_visual_indicator||{},g=d.geometry_indicator||{},t=state.triage||{};$("dFrames").textContent=fmt(q.images_analyzed);$("dSharp").textContent=q.mean_sharpness!=null?Number(q.mean_sharpness).toFixed(1):"—";$("dBright").textContent=q.mean_brightness!=null?Number(q.mean_brightness).toFixed(1):"—";$("dDark").textContent=q.dark_frame_ratio!=null?(q.dark_frame_ratio*100).toFixed(1)+"%":"—";$("dCrack").textContent=c.mean_candidate_ratio!=null?(c.mean_candidate_ratio*100).toFixed(2)+"%":"—";$("dIncline").textContent=g.dominant_plane_tilt_deg!=null?Number(g.dominant_plane_tilt_deg).toFixed(2)+"°":"—";
+ $("triage").textContent=t.label||"PENDING";$("triageSub").textContent=t.severity||"Analysis not run";$("recLevel").textContent=t.recommendation_level||"REVIEW";$("recText").textContent=(t.reasons||[]).join(" · ")||"Run screening analysis.";$("recList").innerHTML=(t.directives||[]).map(x=>`<li>${esc(x)}</li>`).join("");$("triDot").className="dot "+(t.label==="RED"||t.label==="ORANGE"?"bad":t.label==="YELLOW"?"warn":t.label==="GREEN"?"good":"");
+ $("imgCount").textContent=fmt(state.reconstruction_images_count);$("evidenceCount").textContent=fmt(state.evidence_images_count);renderGallery();
+ const sig=state.model_ready?[state.active_scene_id,state.model_iteration,state.model_size_bytes,state.model_url].join(":"):null;if(sig!==viewerSignature){viewerSignature=sig;loadGaussian();}
+}
+function renderGallery(){
+ const imgs=state?.images||[],q=($("search").value||"").toLowerCase(),filtered=imgs.map((x,i)=>({...x,i})).filter(x=>x.name.toLowerCase().includes(q)),size=parseInt($("pageSize").value||24),pages=Math.max(1,Math.ceil(filtered.length/size));if(page>pages)page=pages;const key=`${q}|${size}|${page}|${state.updated_at}|${selected}`;$("pageInfo").textContent=`Page ${page}/${pages} · ${filtered.length}`;if(key===lastGalleryKey)return;lastGalleryKey=key;const items=filtered.slice((page-1)*size,page*size);$("galleryGrid").innerHTML=items.map(im=>`<div class="thumb ${im.i===selected?"selected":""}" data-i="${im.i}"><img loading="lazy" src="${im.url}?v=${encodeURIComponent(state.updated_at||"")}" alt=""><label>${esc(im.name)}</label></div>`).join("");document.querySelectorAll(".thumb").forEach(el=>el.addEventListener("click",()=>selectImage(Number(el.dataset.i))));}
+function selectImage(i){if(!state?.images?.length)return;const next=state.images[(i+state.images.length)%state.images.length];if(routePlan.frameName&&routePlan.frameName!==next.name)routePlan={start:null,target:null,hazards:[],frameName:null};selected=(i+state.images.length)%state.images.length;const im=state.images[selected];$("mainImage").src=`${im.url}?v=${encodeURIComponent(state.updated_at||"")}`;$("mainImage").classList.remove("hidden");$("imageEmpty").classList.add("hidden");$("frameInfo").textContent=`FRAME ${String(selected+1).padStart(3,"0")} · ${im.name}`;$("imageMeta").textContent=`Frame ${selected+1} of ${state.images.length} · ${state.active_scene_name||""}`;$("frameInput").value=selected+1;lastGalleryKey="";renderGallery();routePlan.frameName=currentFrameName();setTimeout(drawRouteCanvas,80);}
+async function uploadFiles(files,handling){if(!files?.length)return;const fd=new FormData();[...files].forEach(f=>fd.append("files",f));try{const r=await fetch(`/api/upload-images?handling=${encodeURIComponent(handling)}`,{method:"POST",body:fd});const j=await r.json();if(!r.ok)throw new Error(j.detail||"Upload failed");toast(`${j.added?.length||0} image(s) added`);await getState();if(handling==="append"&&Number(state?.reconstruction_images_count||0)>=3&&!state?.busy&&(!state?.colmap_ready||state?.colmap_stale)){const cm=await fetch("/api/colmap",{method:"POST"});const cj=await cm.json();if(!cm.ok)throw new Error(cj.detail||"Images uploaded, but COLMAP could not start");toast("New images detected · COLMAP generation started.");await getState();}}catch(e){console.error(e);toast(e.message);}}
+$("addBtn").onclick=()=>{$("handlingModal").classList.add("show");};$("cancelHandling").onclick=()=>$("handlingModal").classList.remove("show");$("continueHandling").onclick=()=>{const h=document.querySelector('input[name="handling"]:checked').value;$("handlingModal").classList.remove("show");if(h==="new"){toast("Create a new incident with the New incident button.");return;}$("fileInput").dataset.handling=h;$("fileInput").click();};$("fileInput").onchange=e=>uploadFiles(e.target.files,e.target.dataset.handling||"append");$("evidenceBtn").onclick=()=>$("evidenceInput").click();$("evidenceInput").onchange=e=>uploadFiles(e.target.files,"evidence");
+$("newSceneBtn").onclick=()=>$("sceneModal").classList.add("show");$("cancelScene").onclick=()=>$("sceneModal").classList.remove("show");$("createScene").onclick=async()=>{const name=$("sceneNameInput").value.trim();if(!name){toast("Enter an incident name.");return;}const desc=$("sceneDescInput").value.trim();const type=$("sceneTypeInput").value;const location=$("sceneLocationInput").value.trim();try{const r=await fetch(`/api/scenes?name=${encodeURIComponent(name)}&description=${encodeURIComponent(desc)}&disaster_type=${encodeURIComponent(type)}&location=${encodeURIComponent(location)}`,{method:"POST"});if(!r.ok)throw new Error((await r.json()).detail||"Could not create incident");$("sceneModal").classList.remove("show");viewerSignature=null;await loadScenes();await getState();$("sceneNameInput").value="";$("sceneLocationInput").value="";$("sceneDescInput").value="";toast("Disaster site created.");}catch(e){toast(e.message);}};
+$("sceneSelect").onchange=async()=>{try{const r=await fetch(`/api/scenes/select?scene_id=${encodeURIComponent($("sceneSelect").value)}`,{method:"POST"});if(!r.ok)throw new Error((await r.json()).detail||"Unable to select incident");viewerSignature=null;sceneBounds=null;resetRoutePlan();await loadScenes();await getState();}catch(e){toast(e.message);}};
+$("colmapBtn").onclick=async()=>{if(Number(state?.reconstruction_images_count||0)<3){toast("Add at least 3 overlapping reconstruction images first.");return;}try{const r=await fetch("/api/colmap",{method:"POST"});const j=await r.json();if(!r.ok)throw new Error(j.detail||"Unable to start COLMAP");toast("COLMAP generation started.");await getState();}catch(e){toast(e.message||"Unable to start COLMAP");}};
+$("rebuildBtn").onclick=async()=>{if(!state?.model_stale){toast("No new reconstruction imagery requires rebuilding.");return;}const entered=prompt("3DGS iterations for this rebuild:\n500 = preview\n1000 = standard\n3000 = detailed\n7000 = high quality",String(state.model_iteration||7000));if(entered===null)return;const iterations=Math.max(100,Math.min(30000,parseInt(entered)||7000));try{const r=await fetch(`/api/run?iterations=${iterations}`,{method:"POST"});const j=await r.json();if(!r.ok)throw new Error(j.detail||"Unable to start reconstruction");toast(`Reconstruction started · ${iterations} iterations`);await getState();}catch(e){toast(e.message);}};
+$("analyzeBtn").onclick=async()=>{try{const r=await fetch("/api/analyze",{method:"POST"});const j=await r.json();if(!r.ok)throw new Error(j.detail||"Screening failed");toast("Screening updated.");await getState();}catch(e){toast(e.message);}};
+$("front3d").onclick=()=>setCamera("front");$("side3d").onclick=()=>setCamera("side");$("top3d").onclick=()=>setCamera("top");$("fit3d").onclick=()=>setCamera("fit");$("reset3d").onclick=()=>setCamera("fit");$("alphaRange").oninput=()=>$("alphaValue").textContent=$("alphaRange").value;$("applyAlpha").onclick=()=>{viewerSignature=null;loadGaussian();};
+$("locate3d").onclick=async()=>{const im=state?.images?.[selected];if(!im||!viewer)return toast("Select a frame and wait for the 3D viewer.");try{const r=await fetch(`/api/camera/${encodeURIComponent(im.name)}`,{cache:"no-store"});const j=await r.json();if(!r.ok)throw new Error(j.detail||"Camera pose unavailable");viewer.camera.position.set(...j.position);viewer.camera.lookAt(...j.target);viewer.camera.updateProjectionMatrix?.();toast(`3D synchronized with ${im.name}`);}catch(e){toast(e.message||"Camera pose unavailable");}};
+$("routeCanvas").onclick=handleRouteCanvasClick;$("mainImage").onload=()=>drawRouteCanvas();$("planRouteBtn").onclick=generateRoute;$("clearRouteBtn").onclick=clearRoute;$("hazardRadius").oninput=()=>$("hazardRadiusValue").textContent=$("hazardRadius").value+"%";$("planMode").onchange=()=>{if($("planMode").value==="controlled_entry"&&!$("entryAuthorized").checked)toast("Controlled-entry planning requires explicit authorization.");};
+$("firstBtn").onclick=()=>selectImage(0);$("prevBtn").onclick=()=>selectImage(selected-1);$("nextBtn").onclick=()=>selectImage(selected+1);$("lastBtn").onclick=()=>selectImage((state?.images?.length||1)-1);$("frameInput").onchange=()=>selectImage((parseInt($("frameInput").value)||1)-1);$("search").oninput=()=>{page=1;lastGalleryKey="";renderGallery();};$("pageSize").onchange=()=>{page=1;lastGalleryKey="";renderGallery();};$("pagePrev").onclick=()=>{page=Math.max(1,page-1);lastGalleryKey="";renderGallery();};$("pageNext").onclick=()=>{page+=1;lastGalleryKey="";renderGallery();};
+window.addEventListener("keydown",e=>{if(["INPUT","SELECT","TEXTAREA"].includes(e.target?.tagName))return;if(e.key==="ArrowLeft")selectImage(selected-1);if(e.key==="ArrowRight")selectImage(selected+1);if(e.key==="Home")selectImage(0);if(e.key==="End")selectImage((state?.images?.length||1)-1);});
+async function refreshLayaStatus(){
+ try{
+  const r=await fetch('/api/laya/health',{cache:'no-store'});
+  const j=await r.json();
+  if(j.available){
+    $('layaStatus').textContent='LAYA ONLINE';
+    $('layaStatus').className='pill ready';
+  }else{
+    $('layaStatus').textContent='LAYA OFFLINE';
+    $('layaStatus').className='pill danger';
+  }
+ }catch(e){
+  $('layaStatus').textContent='LAYA OFFLINE';
+  $('layaStatus').className='pill danger';
+ }
+}
+$("autoAnalyzeBtn").onclick=analyzeResponse;$("recommendRouteBtn").onclick=recommendRoute;$("useApproachBtn").onclick=()=>{const p=state?.response?.recommended_approach?.point;if(!p)return toast("Run automatic analysis first.");routePlan.start=p;routePlan.frameName=currentFrameName();$("planPointMode").value="start";drawRouteCanvas();toast("Recommended approach candidate set as START.");};$("clearResponseBtn").onclick=async()=>{try{const r=await fetch("/api/response",{method:"DELETE"});const j=await r.json();state.response=j.response;renderResponse(j.response);drawRouteCanvas();toast("Automatic response analysis cleared.");}catch(e){toast(e.message||"Unable to clear response analysis");}};
+(async()=>{const ok=await loadLibraries();await loadScenes();await getState();await refreshLayaStatus();if(!ok)toast("3D viewer library could not be loaded.");setInterval(getState,5000);setInterval(refreshLayaStatus,15000);})();
+</script>
+</body>
+</html>

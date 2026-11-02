@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AeroSplat | Disaster Intelligence Console</title>
+<style>
+:root{--bg:#071018;--panel:#0d1822;--panel2:#111f2b;--line:#213442;--text:#edf4f8;--muted:#8ea1ad;--accent:#63b8ff;--good:#4fd39a;--warn:#e5bd63;--bad:#ff7070;--cyan:#61d6dd;--shadow:0 18px 50px rgba(0,0,0,.28)}
+*{box-sizing:border-box}body{margin:0;background:#071018;color:var(--text);font:13px/1.45 Inter,Segoe UI,Arial,sans-serif;height:100vh;overflow:hidden}button,input{font:inherit}.app{height:100vh;display:grid;grid-template-rows:64px 1fr 170px;background:radial-gradient(circle at 54% -10%,#163246 0,#071018 42%)}
+header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--line);background:rgba(7,16,24,.94);backdrop-filter:blur(10px)}
+.brand{display:flex;gap:12px;align-items:center}.mark{width:34px;height:34px;border:1px solid #4b94c7;border-radius:10px;display:grid;place-items:center;font-weight:800;color:#a5d8ff;background:#0b1e2d}.brand h1{font-size:15px;letter-spacing:.16em;margin:0}.brand small{color:var(--muted);font-size:9px;letter-spacing:.15em}.header-right{display:flex;align-items:center;gap:10px}.pill{padding:7px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:11px}.pill.ready{color:var(--good);border-color:#285440}.pill.busy{color:var(--accent);border-color:#234c68}.btn{border:1px solid #2a4658;background:#0e1d28;color:#dceaf2;padding:8px 12px;border-radius:8px;cursor:pointer}.btn:hover{border-color:#4b7794;background:#132638}.btn.primary{background:#1b4f70;border-color:#317aa7}.btn.danger{background:#321d22;border-color:#66343e}
+main{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:12px;padding:12px}.canvas-grid{min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) 230px;gap:12px}.card{background:linear-gradient(180deg,rgba(17,31,43,.98),rgba(11,22,31,.98));border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}.card-head{height:42px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 13px}.title{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}.muted{color:var(--muted)}
+.viewer{position:relative;min-height:0}.viewer-stage{position:absolute;inset:42px 0 0;background:radial-gradient(circle at 50% 40%,#102736,#08131c 64%)}#splat{width:100%;height:100%}.placeholder{position:absolute;inset:42px 0 0;display:grid;place-items:center;color:#7d919e;text-align:center}.viewer-actions{display:flex;gap:6px}.tab{border:1px solid var(--line);background:#0d1c28;color:var(--muted);padding:5px 9px;border-radius:6px}.tab.active{color:#dff0fa;border-color:#356c91}
+.inspector{display:grid;grid-template-rows:42px 1fr}.image-content{display:grid;grid-template-columns:minmax(0,1fr) 200px;min-height:0}.image-stage{position:relative;background:#071017;display:grid;place-items:center;overflow:hidden}.image-stage img{max-width:100%;max-height:100%;object-fit:contain}.frame-info{position:absolute;left:10px;bottom:10px;background:rgba(4,10,14,.78);border:1px solid var(--line);padding:5px 8px;border-radius:6px;font-size:10px}.thumb-strip{border-left:1px solid var(--line);padding:8px;overflow:auto}.thumb{display:grid;grid-template-columns:60px 1fr;gap:7px;align-items:center;padding:5px;border-radius:7px;cursor:pointer;border:1px solid transparent}.thumb:hover,.thumb.selected{background:#122432;border-color:#29536b}.thumb img{width:60px;height:46px;object-fit:cover;border-radius:4px}.thumb span{font-size:10px;color:#a9bbc5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar{min-height:0;overflow:auto;padding-right:2px}.section{padding:12px;border-bottom:1px solid #1c2d38}.section:last-child{border-bottom:0}.section-title{font-size:10px;text-transform:uppercase;letter-spacing:.11em;color:#91a6b2;margin-bottom:9px}.status{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid var(--line);border-radius:9px;background:#0a151e}.status strong{font-size:24px;letter-spacing:.03em}.status small{display:block;color:var(--muted);margin-top:2px}.dot{width:10px;height:10px;border-radius:50%;background:var(--warn);box-shadow:0 0 14px rgba(229,189,99,.4)}.dot.ready{background:var(--good);box-shadow:0 0 14px rgba(79,211,154,.4)}.dot.bad{background:var(--bad)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.metric{border:1px solid #1e303c;border-radius:8px;padding:8px 9px;background:#0a151e}.metric span{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.06em}.metric strong{display:block;margin-top:4px;font-size:15px}.bar{height:6px;background:#09121a;border-radius:999px;overflow:hidden;border:1px solid #1b2b36}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#438bb8,#62c8d3);transition:width .4s}.rows{display:grid;gap:5px;margin-top:8px}.row{display:flex;justify-content:space-between;gap:12px}.row span{color:var(--muted)}.row em{font-style:normal;text-align:right}.directive{padding:8px 9px;border-left:2px solid #4c819f;background:#0a151e;margin-top:5px;border-radius:0 6px 6px 0;color:#c4d3db;font-size:11px}.stale{color:var(--warn)}
+.bottom{display:grid;grid-template-columns:300px 1fr;gap:12px;padding:0 12px 12px}.upload-card{display:flex;flex-direction:column;justify-content:center;padding:13px}.upload-card .btn{width:100%}.upload-meta{margin-top:9px;color:var(--muted);font-size:10px}.bottom-strip{min-width:0;display:flex;align-items:center;gap:7px;overflow:auto;padding:8px;background:rgba(10,20,29,.95);border:1px solid var(--line);border-radius:12px}.bottom-strip .mini{flex:0 0 92px;height:112px;position:relative;border:1px solid #1f3340;border-radius:7px;overflow:hidden;cursor:pointer;background:#0a141c}.bottom-strip .mini img{width:100%;height:100%;object-fit:cover;opacity:.82}.mini b{position:absolute;bottom:4px;left:4px;right:4px;background:rgba(0,0,0,.68);padding:2px 4px;border-radius:4px;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toast{position:fixed;right:18px;bottom:18px;padding:10px 13px;background:#0c1d28;border:1px solid #31536a;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}.hidden{display:none!important}
+@media(max-width:1000px){body{overflow:auto}.app{height:auto;min-height:100vh;grid-template-rows:64px auto auto}main{grid-template-columns:1fr}.sidebar{max-height:none}.bottom{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="mark">A</div><div><h1>AEROSPLAT</h1><small>POST-DISASTER DIGITAL TWIN & RESPONSE INTELLIGENCE</small></div></div>
+  <div class="header-right"><span id="health" class="pill">SYSTEM CHECK</span><button class="btn" id="reportBtn">EXPORT STATUS</button><button class="btn primary" id="runBtn">RUN RECONSTRUCTION</button></div>
+</header>
+<main>
+  <section class="canvas-grid">
+    <div class="card viewer">
+      <div class="card-head"><span class="title">3D Digital Twin</span><div class="viewer-actions"><button class="tab active" data-mode="twin">Twin</button><button class="tab" data-mode="risk">Risk Overlay</button></div></div>
+      <div id="splat" class="viewer-stage"></div><div id="placeholder" class="placeholder">Loading model status…</div>
+    </div>
+    <div class="card inspector">
+      <div class="card-head"><span class="title">Drone Image Inspection</span><span class="muted" id="imgCount">0 frames</span></div>
+      <div class="image-content"><div class="image-stage"><img id="mainImage" class="hidden" alt="Selected drone image"><div id="imageEmpty" class="placeholder" style="position:static">Select a drone frame.</div><div id="frameInfo" class="frame-info hidden"></div></div><div id="thumbStrip" class="thumb-strip"></div></div>
+    </div>
+  </section>
+  <aside class="card sidebar">
+    <div class="section"><div class="section-title">Incident Status</div><div class="status"><div><strong id="triage">PENDING</strong><small id="triageSub">Awaiting assessment</small></div><span id="triageDot" class="dot"></span></div></div>
+    <div class="section"><div class="section-title">Reconstruction Telemetry</div><div class="grid2"><div class="metric"><span>Input frames</span><strong id="mImages">0</strong></div><div class="metric"><span>Registered</span><strong id="mReg">0</strong></div><div class="metric"><span>3D points</span><strong id="mPts">0</strong></div><div class="metric"><span>Observations</span><strong id="mObs">0</strong></div><div class="metric"><span>Reprojection</span><strong id="mReproj">—</strong></div><div class="metric"><span>Camera</span><strong id="mCam">—</strong></div></div><div class="rows" style="margin-top:9px"><div class="row"><span>Mean track length</span><em id="mTrack">—</em></div><div class="row"><span>Observations / image</span><em id="mObsImg">—</em></div></div></div>
+    <div class="section"><div class="section-title">Processing Pipeline</div><div class="bar"><i id="bar"></i></div><div class="rows"><div class="row"><span id="stageText">Idle</span><em id="pct">0%</em></div><div class="row"><span>Dataset</span><em id="datasetState">Ready</em></div><div class="row"><span>COLMAP</span><em id="colmapState">Pending</em></div><div class="row"><span>Gaussian Splatting</span><em id="gsState">Pending</em></div></div></div>
+    <div class="section"><div class="section-title">3DGS Model</div><div class="rows"><div class="row"><span>Iteration</span><em id="modelIter">—</em></div><div class="row"><span>Model size</span><em id="modelSize">—</em></div><div class="row"><span>Dataset status</span><em id="modelStatus">—</em></div></div></div>
+    <div class="section"><div class="section-title">Damage Evidence</div><div class="grid2"><div class="metric"><span>Crack length</span><strong id="dCrack">—</strong></div><div class="metric"><span>Crack width</span><strong id="dWidth">—</strong></div><div class="metric"><span>Wall tilt</span><strong id="dTilt">—</strong></div><div class="metric"><span>Rubble volume</span><strong id="dRubble">—</strong></div></div><div class="rows"><div class="row"><span>Status</span><em id="damageStatus">Awaiting model</em></div></div></div>
+    <div class="section"><div class="section-title">Responder Route</div><div class="rows"><div class="row"><span>Status</span><em id="routeStatus">Not computed</em></div><div class="row"><span>Distance</span><em id="routeDistance">—</em></div><div class="row"><span>Blocked zones</span><em id="routeBlocked">0</em></div></div></div>
+    <div class="section"><div class="section-title">Operator Guidance</div><div id="directives"></div></div>
+  </aside>
+</main>
+<section class="bottom">
+  <div class="card upload-card"><button class="btn primary" id="addBtn">+ ADD DRONE IMAGES</button><input id="fileInput" type="file" accept="image/*" multiple class="hidden"><div class="upload-meta">Add additional viewpoints to the active dataset. New images mark the current 3D twin as stale until reconstruction is rerun.</div></div>
+  <div id="bottomStrip" class="bottom-strip"></div>
+</section>
+</div>
+<div class="toast" id="toast"></div>
+<script type="module">
+import * as GaussianSplats3D from 'https://esm.sh/@mkkellogg/gaussian-splats-3d@0.4.7?bundle';
+window.GaussianSplats3D=GaussianSplats3D;
+window.dispatchEvent(new Event('gaussian-ready'));
+</script>
+<script>
+let state=null, selected=0, viewer=null, gsReady=false;
+const $=id=>document.getElementById(id);
+function toast(m){const e=$('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2800)}
+function fmt(v){return v===null||v===undefined||v===''?'—':Number(v).toLocaleString()}
+function bytes(v){if(!v)return '—'; if(v<1024*1024)return `${(v/1024).toFixed(0)} KB`; return `${(v/1024/1024).toFixed(2)} MB`}
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+async function load(){try{const r=await fetch('/api/state',{cache:'no-store'});state=await r.json();render();}catch(e){console.error(e);}}
+function render(){
+  if(!state)return;
+  $('health').textContent=state.busy?state.status:'SYSTEM READY';$('health').className='pill '+(state.busy?'busy':'ready');
+  const p=Math.max(0,Math.min(100,state.progress||0));$('bar').style.width=p+'%';$('pct').textContent=p+'%';$('stageText').textContent=state.status||'Idle';
+  $('mImages').textContent=fmt(state.images_count);$('mReg').textContent=fmt(state.registered_images);$('mPts').textContent=fmt(state.points3d);$('mObs').textContent=fmt(state.observations);$('mReproj').textContent=state.mean_reprojection_error_px?state.mean_reprojection_error_px.toFixed(2)+' px':'—';$('mCam').textContent=state.camera_model||'—';$('mTrack').textContent=state.mean_track_length?state.mean_track_length.toFixed(2):'—';$('mObsImg').textContent=state.mean_observations_per_image?state.mean_observations_per_image.toFixed(1):'—';
+  $('datasetState').textContent=state.images_count>=3?'Ready':'Need ≥3 images';$('colmapState').textContent=state.registered_images?`${state.registered_images}/${state.images_count}`:(state.busy?'Running…':'Pending');$('gsState').textContent=state.model_ready?'Ready':(state.busy?'Running…':'Pending');
+  $('modelIter').textContent=state.model_iteration?fmt(state.model_iteration):'—';$('modelSize').textContent=bytes(state.model_size_bytes);$('modelStatus').textContent=state.model_stale?'STALE — rerun reconstruction':(state.model_ready?'CURRENT':'—');$('modelStatus').className=state.model_stale?'stale':'';
+  const t=state.triage||{};$('triage').textContent=t.label||'PENDING';$('triageSub').textContent=t.severity||'Awaiting assessment';$('triageDot').className='dot '+(String(t.label||'').includes('RED')?'bad':String(t.label||'').includes('YELLOW')?'':'ready');
+  const d=state.damage||{};$('dCrack').textContent=d.crack_length_m!=null?d.crack_length_m+' m':'—';$('dWidth').textContent=d.crack_width_mm!=null?d.crack_width_mm+' mm':'—';$('dTilt').textContent=d.wall_tilt_deg!=null?d.wall_tilt_deg+'°':'—';$('dRubble').textContent=d.rubble_volume_m3!=null?d.rubble_volume_m3+' m³':'—';$('damageStatus').textContent=d.status||'—';
+  const rt=state.route||{};$('routeStatus').textContent=rt.status||'—';$('routeDistance').textContent=rt.distance_m!=null?rt.distance_m+' m':'—';$('routeBlocked').textContent=fmt(rt.blocked_zones||0);
+  $('directives').innerHTML=(t.directives||['Run reconstruction before making response decisions.']).map(x=>`<div class="directive">${esc(x)}</div>`).join('');
+  $('imgCount').textContent=fmt(state.images_count)+' frames';renderThumbs(state.images||[]);loadModel();
+  $('placeholder').textContent=state.model_ready?'Loading Gaussian scene…':'No trained Gaussian model available.'; if(!state.model_ready)$('placeholder').style.display='grid';
+}
+function renderThumbs(images){
+  const c=$('thumbStrip'),b=$('bottomStrip');c.innerHTML='';b.innerHTML='';
+  if(!images.length){c.innerHTML='<div class="muted" style="padding:10px">No imagery loaded.</div>';return}
+  if(selected>=images.length)selected=0;selectImage(selected);
+  images.forEach((im,i)=>{const a=document.createElement('div');a.className='thumb'+(i===selected?' selected':'');a.innerHTML=`<img src="${im.url}?v=${state.updated_at}" alt=""><span>${esc(im.name)}</span>`;a.onclick=()=>selectImage(i);c.appendChild(a);const m=document.createElement('div');m.className='mini';m.innerHTML=`<img src="${im.url}?v=${state.updated_at}" alt=""><b>${esc(im.name)}</b>`;m.onclick=()=>selectImage(i);b.appendChild(m);});
+}
+function selectImage(i){if(!state?.images?.length)return;selected=i;const im=state.images[i];$('mainImage').src=im.url+'?v='+state.updated_at;$('mainImage').classList.remove('hidden');$('imageEmpty').classList.add('hidden');$('frameInfo').classList.remove('hidden');$('frameInfo').textContent=`FRAME ${String(i+1).padStart(3,'0')} · ${im.name}`;document.querySelectorAll('.thumb').forEach((e,j)=>e.classList.toggle('selected',j===i));}
+async function addFiles(files){if(!files.length)return;const fd=new FormData();for(const f of files)fd.append('files',f);const r=await fetch('/api/upload-images',{method:'POST',body:fd});const j=await r.json();if(!r.ok){toast(j.detail||'Upload failed');return}toast(`${j.added.length} frame(s) added`);load()}
+async function run(){let it=prompt('3DGS iterations for this reconstruction:',String(state?.model_iteration||7000));if(it===null)return;it=Math.max(100,Math.min(30000,parseInt(it)||7000));const r=await fetch('/api/run?iterations='+it,{method:'POST'});const j=await r.json();if(!r.ok){toast(j.detail||'Could not start reconstruction');return}toast('Reconstruction started');load()}
+async function loadModel(){if(!gsReady||!state?.model_ready)return;if(viewer)return;try{const V=window.GaussianSplats3D.Viewer;viewer=new V({rootElement:$('splat'),cameraUp:[0,-1,-0.6],initialCameraPosition:[0,-3,5],initialCameraLookAt:[0,0,0],gpuAcceleratedSort:false,sharedMemoryForWorkers:false,enableSIMDInSort:true});await viewer.addSplatScene('/api/model.ply?v='+encodeURIComponent(state.updated_at),{format:GaussianSplats3D.SceneFormat.Ply,showLoadingUI:true,progressiveLoad:false,splatAlphaRemovalThreshold:1});viewer.start();$('placeholder').style.display='none';}catch(e){console.error(e);$('placeholder').textContent='Gaussian model could not be loaded in the browser. Check WebGL support.';$('placeholder').style.display='grid';}}
+$('addBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>addFiles(e.target.files);$('runBtn').onclick=run;$('reportBtn').onclick=async()=>{const r=await fetch('/api/report');const blob=new Blob([JSON.stringify(await r.json(),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aerosplat_status.json';a.click();URL.revokeObjectURL(a.href)};
+document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');toast(btn.dataset.mode==='risk'?'Risk overlay layer will connect to hazard analysis':'Digital Twin view active')});
+window.addEventListener('gaussian-ready',()=>{gsReady=true;loadModel()});load();setInterval(load,2000);
+</script>
+</body>
+</html>

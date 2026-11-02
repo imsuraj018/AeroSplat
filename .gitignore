@@ -1,0 +1,54 @@
+@'
+# Python environments
+venv/
+env/
+myenv/
+laya_env/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated data and workspaces
+workspace/
+workspaces/
+outputs/
+runs/
+checkpoints/
+logs/
+temp/
+tmp/
+
+# COLMAP generated files
+database.db
+database.db-wal
+database.db-shm
+sparse/
+dense/
+
+# Large generated 3D assets and media
+*.ply
+*.mp4
+*.avi
+*.mov
+
+# Generated model weights
+*.pth
+*.pt
+*.ckpt
+*.h5
+
+# Python packaging
+build/
+dist/
+*.egg-info/
